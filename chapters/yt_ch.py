@@ -4,6 +4,7 @@ functionality. The yt-dlp package is conditionally imported to prevent
 the application from failing to startup if yt-dlp has not been installed.
 
 """
+
 import re
 import json
 import argparse
@@ -128,6 +129,8 @@ def get_chapters_json(yt_video: str):
         video_url = yt_video
     else:
         raise TypeError("Invalid url or YouTube video id")
+
+    video_url = video_url.split("&")[0]
 
     with YoutubeDL() as ydl:
         ydl.params["quiet"] = True
