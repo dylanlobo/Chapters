@@ -31,7 +31,7 @@ class GuiAppInterface(Protocol):
     def request_save_chapters_file(self, default_filename: str = "ch.ch") -> TextIO:
         ...
 
-    def get_youtube_video(self) -> str:
+    def get_youtube_video(self, url_str) -> str:
         ...
 
     def set_chapters(self, chapters: List[str]):
@@ -209,7 +209,8 @@ class GuiController:
         )
 
     def handle_load_chapters_from_youtube(self):
-        video_name = self._view.get_youtube_video()
+        url_str = helpers.get_url_from_clipboard()
+        video_name = self._view.get_youtube_video(url_str)
         if not video_name:
             return
         video_name = video_name.strip()

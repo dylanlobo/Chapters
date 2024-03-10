@@ -14,6 +14,10 @@ from functools import lru_cache
 from typing import Dict, Tuple, TextIO
 import chapters.yt_ch as youtube_chapters
 
+import pyclip
+import validators
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,6 +34,22 @@ class SuspiciousFileOperation(SuspiciousOperation):
     """A Suspicious filesystem operation was attempted"""
 
     pass
+
+
+def get_url_from_clipboard():
+    _url = None
+    try:
+        _url = pyclip.paste()
+        _url = _url.decode('utf-8')
+    except Exception as e:
+        logger.warning(e)
+    _valid = validators.url(_url)
+    if _valid:
+        if _url.find("youtu") == -1:
+            _url = None
+    else:
+        _url = None
+    return _url
 
 
 def get_valid_filename(name):

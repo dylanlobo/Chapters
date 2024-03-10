@@ -350,9 +350,9 @@ class AppMainWindow(ttk.tk.Tk):
         self.popup = PlayerConnectionPopup(master=self)
         return self.popup.select_new_player_name(running_player_names)
 
-    def get_youtube_video(self) -> str:
+    def get_youtube_video(self, url_str) -> str:
         self._yt_video_popup = YoutubeChaptersPopup(master=self)
-        video = self._yt_video_popup.get_video()
+        video = self._yt_video_popup.get_video(url_str)
         return video
 
     def select_theme(self) -> str:
@@ -370,12 +370,14 @@ class YoutubeChaptersPopup:
         self._video = ""
         self._master: tk.Tk = master
         self._video_name = tk.StringVar()
-
-    def get_video(self) -> str:
         self._video_name_return = ""
+
+    def get_video(self, url_str) -> str:
+        url_str = url_str if url_str else ""
         self._popup = tk.Toplevel(self._master)
         self._popup.title("Enter Youtube video id or url")
         self._create_video_entry_panel()
+        self._video_name.set(url_str)
         self._popup.bind("<Return>", self._handle_enter_pressed)
         self._popup.bind("<Escape>", self._handle_escape_pressed)
         self._popup.bind("<Button-3>", self._handle_right_click_pressed)
