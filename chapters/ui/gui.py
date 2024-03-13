@@ -103,6 +103,7 @@ class PlayerControlPanel(ttk.LabelFrame):
             "<<<": "<Control-Left>",
             "<<": "<Shift-Left>",
             "<": "<Left>",
+            "Play/Pause": "<p>",
             ">>>": "<Control-Right>",
             ">>": "<Shift-Right>",
             ">": "<Right>",
@@ -113,10 +114,6 @@ class PlayerControlPanel(ttk.LabelFrame):
         for button in self._buttons:
             button_name = button.cget("text")
             button.configure(command=player_controls_funcs[button_name])
-            self._root.bind(
-                "<p>",
-                ignore_arguments(player_controls_funcs["Play/Pause"]),
-            )
             if button_name in self._button_to_key_dict:
                 self._root.bind(
                     self._button_to_key_dict[button_name],
