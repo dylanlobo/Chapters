@@ -20,25 +20,34 @@ class ChaptersPanel(ttk.LabelFrame):
         super().__init__(master, text="Chapters")
         self._chapters = chapters
         self._chapter_selection_action_functs = chapters_selection_action_functs
+        # Create a vertical scrollbar
+        vertical_scrollbar = ttk.Scrollbar(self)
+        vertical_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Create a horizontal scrollbar
+        horizontal_scrollbar = ttk.Scrollbar(self, orient=tk.HORIZONTAL)
+        horizontal_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+
         lb_height = 11
         self._lb = tk.Listbox(
-            self, listvariable=tk.StringVar(value=chapters), width=75, height=lb_height
+            self,
+            listvariable=tk.StringVar(value=chapters),
+            height=lb_height,
+            yscrollcommand=vertical_scrollbar.set,
+            xscrollcommand=horizontal_scrollbar.set,
         )
         self._chapters_lb = self._lb
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.grid(sticky="NWES")
-        self._lb.grid(column=0, row=0, sticky="nesw")
-        sv = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self._lb.yview)
-        sv.grid(column=1, row=0, sticky="ns")
-        self._lb["yscrollcommand"] = sv.set
-        sh = ttk.Scrollbar(self, orient=tk.HORIZONTAL, command=self._lb.xview)
-        sh.grid(column=0, row=1, sticky="ew")
-        self._lb["xscrollcommand"] = sh.set
+        self._lb.pack(fill=tk.BOTH, expand=True)
+        self.pack(fill=tk.BOTH, padx=5, pady=5, expand=True)
+
+        # Configure the scrollbars to control the listbox
+        vertical_scrollbar.config(command=self._lb.yview)
+        horizontal_scrollbar.config(command=self._lb.xview)
+
+        # Key Bindings
         self._lb.bind("<Return>", self.lb_selection_handler)
         self._lb.bind("<Button-3>", self.lb_right_button_handler)
         self._lb.bind("<Button-3>", self.lb_selection_handler, add="+")
-        self.grid(padx=2, sticky="nsew")
 
     def set_chapters(self, chapters: List[str]):
         self._chapters_lb.delete(0, tk.END)
@@ -79,8 +88,6 @@ class PlayerControlPanel(ttk.LabelFrame):
         self._default_title = "Player Controls"
         super().__init__(root, text=self._default_title)
         self._root = root.winfo_toplevel()
-        self.columnconfigure(9, weight=1)
-        self.rowconfigure(0, weight=1)
         self._buttons = []
         self._buttons.append(ttk.Button(self, text="|<", width=3))
         self._buttons.append(ttk.Button(self, text="<<<", width=4))
@@ -94,8 +101,9 @@ class PlayerControlPanel(ttk.LabelFrame):
         self._init_button_to_key_dict()
         n_buttons = len(self._buttons)
         for i in range(0, n_buttons):
-            self._buttons[i].grid(row=0, column=i, padx=5, pady=5)
-        self.grid(padx=2, pady=2, sticky="nesw")
+            self._buttons[i].grid(row=0, column=i, padx=5, pady=5, sticky="nsew")
+            self.columnconfigure(i, weight=1)
+        self.pack(fill=tk.X, padx=5, pady=5, expand=True)
 
     def _init_button_to_key_dict(self):
         self._button_to_key_dict = {
@@ -184,7 +192,7 @@ class AppMainWindow(ttk.tk.Tk):
 
     def __init__(self):
         super().__init__(className="Chapters")
-        self.geometry("625x310")
+        self.minsize(width=625, height=340)
         ttk.Style("darkly")
         self.bind("<Escape>", self._handle_escape_pressed)
         self._default_title = "Chapters"
@@ -205,13 +213,16 @@ class AppMainWindow(ttk.tk.Tk):
             root=self._player_control_place_panel
         )
         # place the ChaptersPanel and PlayerControlPanel in the main window
-        self._chapters_place_panel.place(relx=0, rely=0, relwidth=1, relheight=0.8)
-        self._player_control_place_panel.place(
-            relx=0, rely=0.8, relwidth=1, relheight=0.2
-        )
+        self._chapters_place_panel.grid(row=0, column=0, sticky="nsew")
+        self._player_control_place_panel.grid(row=1, column=0, sticky="nsew")
         self._chapters_file_path = None
         self._supported_themes = self.get_themes()
         self._menu_bar.bind_theme_selection_command(self.select_theme)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=4)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid()
+        self.resizable(width=True, height=True)
 
     @property
     def menu_bar(self):
@@ -241,8 +252,6 @@ class AppMainWindow(ttk.tk.Tk):
         self.destroy()
 
     def show_display(self):
-        self.grid()
-        self.resizable(width=False, height=False)
         self.mainloop()
 
     def set_main_window_title(self, media_title: str):
