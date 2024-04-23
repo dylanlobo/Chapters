@@ -3,8 +3,9 @@ from typing import Any, Dict, List
 from functools import cached_property
 import dbus
 import logging
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class Player_dbus_python(Player):

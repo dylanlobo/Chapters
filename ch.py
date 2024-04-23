@@ -5,15 +5,12 @@ players to connect to. If only one player is running then it directly connects
 to the running player.
 """
 
+from chapters import logger_config
 import argparse
-import logging
-
 from chapters.ui.console_ui import build_console_menu
 from chapters.ui.gui_builder import AppMainWindow, build_gui
 
-# logging.basicConfig(filename="log.txt", filemode="w", level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 def main():

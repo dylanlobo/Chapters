@@ -1,9 +1,9 @@
 from .player import Player
 from functools import cached_property, wraps
 from typing import Any, Dict
-import logging
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 def reconnect_player(func):

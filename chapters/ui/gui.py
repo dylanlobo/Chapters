@@ -1,4 +1,3 @@
-import logging
 import tkinter as tk
 from tkinter import filedialog
 from pathlib import Path
@@ -6,8 +5,9 @@ from pathlib import Path
 import ttkbootstrap as ttk
 import chapters.ui.ch_icon as icon
 from typing import List, Dict, TextIO
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class ChaptersPanel(ttk.LabelFrame):

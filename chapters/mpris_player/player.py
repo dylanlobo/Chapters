@@ -1,12 +1,13 @@
 """Convenience wrappers for DBbus MPRIS core functionality"""
+
 from abc import ABC, abstractmethod
 import re
-import logging
 from typing import Any, Dict
 from functools import lru_cache, cached_property
+from chapters import logger_config
 
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class Player(ABC):
@@ -24,43 +25,33 @@ class Player(ABC):
         pass
 
     @abstractmethod
-    def raise_window(self) -> None:
-        ...
+    def raise_window(self) -> None: ...
 
     @abstractmethod
-    def play(self) -> None:
-        ...
+    def play(self) -> None: ...
 
     @abstractmethod
-    def play_pause(self) -> None:
-        ...
+    def play_pause(self) -> None: ...
 
     @abstractmethod
-    def pause(self) -> None:
-        ...
+    def pause(self) -> None: ...
 
     @abstractmethod
-    def next(self) -> None:
-        ...
+    def next(self) -> None: ...
 
     @abstractmethod
-    def previous(self) -> None:
-        ...
+    def previous(self) -> None: ...
 
     @abstractmethod
-    def stop(self) -> None:
-        ...
+    def stop(self) -> None: ...
 
     @abstractmethod
-    def seek(self, offset: int) -> None:
-        ...
+    def seek(self, offset: int) -> None: ...
 
     @abstractmethod
-    def set_position(self, to_position: int) -> None:
-        ...
+    def set_position(self, to_position: int) -> None: ...
 
-    def get(self, interface_name: str, property_name: str) -> Any:
-        ...
+    def get(self, interface_name: str, property_name: str) -> Any: ...
 
     @lru_cache()
     def _is_object_path_valid(self, path: str) -> bool:
@@ -89,18 +80,15 @@ class Player(ABC):
 
     @property
     @abstractmethod
-    def mpris_player(self) -> Any:
-        ...
+    def mpris_player(self) -> Any: ...
 
     @property
     @abstractmethod
-    def mpris_media_player2(self) -> Any:
-        ...
+    def mpris_media_player2(self) -> Any: ...
 
     @property
     @abstractmethod
-    def mpris_player_properties(self) -> Any:
-        ...
+    def mpris_player_properties(self) -> Any: ...
 
     @property
     @abstractmethod
@@ -116,43 +104,35 @@ class Player(ABC):
 
     @property
     @abstractmethod
-    def playback_status(self) -> str:
-        ...
+    def playback_status(self) -> str: ...
 
     @property
     @abstractmethod
-    def position(self) -> int:
-        ...
+    def position(self) -> int: ...
 
     @property
     @abstractmethod
-    def metadata(self) -> Dict[str, Any]:
-        ...
+    def metadata(self) -> Dict[str, Any]: ...
 
     @property
     @abstractmethod
-    def trackid(self) -> str:
-        ...
+    def trackid(self) -> str: ...
 
     @cached_property
     @abstractmethod
-    def can_control(self) -> bool:
-        ...
+    def can_control(self) -> bool: ...
 
     @cached_property
     @abstractmethod
-    def can_seek(self) -> bool:
-        ...
+    def can_seek(self) -> bool: ...
 
     @cached_property
     @abstractmethod
-    def can_pause(self) -> bool:
-        ...
+    def can_pause(self) -> bool: ...
 
     @cached_property
     @abstractmethod
-    def can_play(self) -> bool:
-        ...
+    def can_play(self) -> bool: ...
 
 
 class NoValidMprisPlayersError(Exception):

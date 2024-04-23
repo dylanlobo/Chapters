@@ -1,5 +1,7 @@
 import tkinter as tk
+from chapters import logger_config
 
+logger = logger_config.app_logger
 
 icondata = """
 R0lGODlhQABAAIUAAAAAALe3t6ioqMfHx9XV1QQEBAAAAObm5pqamgAAAJeXl8bGxqenp7i4uNfX
@@ -22,4 +24,4 @@ def apply_icon(w):
         icon = tk.PhotoImage(data=icondata)
         w.iconphoto(True, icon)
     except Exception as e:
-        print("Could not load icon due to:\n  ", e)
+        logger.warning("Could not load icon due to:\n  ", e)

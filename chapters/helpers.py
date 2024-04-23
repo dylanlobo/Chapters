@@ -14,9 +14,10 @@ import chapters.yt_ch as youtube_chapters
 
 import pyclip
 import validators
+from chapters import logger_config
 
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class Direction(IntEnum):
@@ -38,7 +39,7 @@ def get_url_from_clipboard():
     _url = None
     try:
         _url = pyclip.paste()
-        _url = _url.decode('utf-8')
+        _url = _url.decode("utf-8")
     except Exception as e:
         logger.warning(e)
     _valid = validators.url(_url)

@@ -4,16 +4,15 @@ from chapters.ui.gui_controller import GuiController
 from functools import partial
 from typing import Tuple, List, Dict, Protocol
 from pathlib import Path
-import logging
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class AppMainWindow(Protocol):
     """The main window protocol class for the application."""
 
-    def show_display(self):
-        ...
+    def show_display(self): ...
 
 
 class AppGuiBuilder:

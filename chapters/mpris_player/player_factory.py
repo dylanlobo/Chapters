@@ -1,12 +1,9 @@
 from typing import Dict
-from .player import (
-  Player,
-  PlayerConnectionError,
-  PlayerCreationError)
+from .player import Player, PlayerConnectionError, PlayerCreationError
 from .proxy_player import PlayerProxy
-import logging
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 try:

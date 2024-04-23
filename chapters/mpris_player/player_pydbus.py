@@ -3,8 +3,9 @@ import pydbus
 import logging
 from typing import Any, Dict, List
 from functools import cached_property
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class Player_pydbus(Player):
@@ -16,8 +17,8 @@ class Player_pydbus(Player):
     def get_service_names() -> List:
         bus = pydbus.SessionBus()
         remote_object = bus.get(
-                "org.freedesktop.DBus",  # Bus name
-                "/org/freedesktop/DBus",  # Object path
+            "org.freedesktop.DBus",  # Bus name
+            "/org/freedesktop/DBus",  # Object path
         )
         all_service_names = remote_object.ListNames()
         return all_service_names

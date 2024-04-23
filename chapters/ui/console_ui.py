@@ -1,5 +1,3 @@
-import logging
-
 from consolemenu import ConsoleMenu, SelectionMenu
 from consolemenu.items import FunctionItem
 from consolemenu.items import SubmenuItem
@@ -12,8 +10,9 @@ from chapters.mpris_player import (
 )
 from chapters.mpris_player import Player, PlayerFactory
 from chapters import helpers
+from chapters import logger_config
 
-logger = logging.getLogger(__name__)
+logger = logger_config.app_logger
 
 
 class ChaptersMenuConsole:
