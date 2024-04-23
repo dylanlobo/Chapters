@@ -1,6 +1,5 @@
 from .player import Player, PlayerConnectionError
 import pydbus
-import logging
 from typing import Any, Dict, List
 from functools import cached_property
 from chapters import logger_config

@@ -3,7 +3,6 @@ Helper functions for mpris-dbus-apps
 """
 
 import re
-import logging
 import os
 import json
 from chapters.mpris_player import Player

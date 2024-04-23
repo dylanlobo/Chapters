@@ -2,7 +2,6 @@ from .player import Player
 from typing import Any, Dict, List
 from functools import cached_property
 import dbus
-import logging
 from chapters import logger_config
 
 logger = logger_config.app_logger
