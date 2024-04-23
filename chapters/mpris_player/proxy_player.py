@@ -1,4 +1,4 @@
-from chapters.dbus_mpris.player import Player
+from .player import Player
 from functools import cached_property, wraps
 from typing import Any, Dict
 import logging

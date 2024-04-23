@@ -6,14 +6,12 @@ from consolemenu.items import SubmenuItem
 from typing import Any, Dict, List
 
 
-from chapters.dbus_mpris.player import (
+from chapters.mpris_player import (
     NoValidMprisPlayersError,
     PlayerCreationError,
 )
-from chapters.dbus_mpris.player_factory import PlayerFactory
-from chapters.dbus_mpris.player import Player
-from chapters.helpers import is_player_useable
-from .. import helpers as mpris_helpers
+from chapters.mpris_player import Player, PlayerFactory
+from chapters import helpers
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +48,7 @@ class ChaptersMenuConsoleBuilder:
 
     def load_chapters_file(self, chapters_filename: str):
         try:
-            self._chapters_title, self._chapters = mpris_helpers.load_chapters_file(
+            self._chapters_title, self._chapters = helpers.load_chapters_file(
                 chapters_filename
             )
         except FileNotFoundError as fe:
@@ -80,7 +78,7 @@ class ChaptersMenuConsoleBuilder:
                 FunctionItem(
                     f"{chapter_name} ({time_offset})",
                     self._player.set_position,
-                    [mpris_helpers.to_microsecs(time_offset)],
+                    [helpers.to_microsecs(time_offset)],
                 )
             )
 
@@ -100,28 +98,28 @@ class ChaptersMenuConsoleBuilder:
             FunctionItem(
                 "Skip Forward 10 sec",
                 self._player.seek,
-                [mpris_helpers.to_microsecs("00:00:10")],
+                [helpers.to_microsecs("00:00:10")],
             )
         )
         command_menu.append_item(
             FunctionItem(
                 "Skip Back 10 sec",
                 self._player.seek,
-                [mpris_helpers.to_microsecs("00:00:10") * -1],
+                [helpers.to_microsecs("00:00:10") * -1],
             )
         )
         command_menu.append_item(
             FunctionItem(
                 "Skip Forward 1 min",
                 self._player.seek,
-                [mpris_helpers.to_microsecs("00:01:00")],
+                [helpers.to_microsecs("00:01:00")],
             )
         )
         command_menu.append_item(
             FunctionItem(
                 "Skip Back 1 min",
                 self._player.seek,
-                [mpris_helpers.to_microsecs("00:01:00") * -1],
+                [helpers.to_microsecs("00:01:00") * -1],
             )
         )
         self.chapters_menu_console.append_main_menu_item(command_submenu_item)
@@ -186,7 +184,7 @@ def get_selected_player(running_players: Dict[str, str]) -> Player:
         short_player_name=selected_player_name,
     )
 
-    while not is_player_useable(player):
+    while not helpers.is_player_useable(player):
         player_names.remove(selected_player_name)
         if not player_names:
             msg = f"{selected_player_name} is not useable. \

@@ -1,8 +1,8 @@
 from typing import List, Dict, Protocol, TextIO, Tuple
-from .. import helpers
-from chapters.dbus_mpris.player import Player
-from chapters.dbus_mpris.player_factory import PlayerFactory, PlayerCreationError
-from chapters.dbus_mpris.proxy_player import PlayerProxy
+from chapters import helpers
+from chapters.mpris_player import Player
+from chapters.mpris_player import PlayerFactory, PlayerCreationError
+from chapters.mpris_player import PlayerProxy
 import logging
 
 logger = logging.getLogger(__name__)

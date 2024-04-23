@@ -1,4 +1,4 @@
-from chapters.dbus_mpris.player import Player, PlayerConnectionError
+from .player import Player, PlayerConnectionError
 import pydbus
 import logging
 from typing import Any, Dict, List

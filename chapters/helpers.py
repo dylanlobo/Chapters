@@ -6,9 +6,7 @@ import re
 import logging
 import os
 import json
-from chapters.dbus_mpris.player import (
-    Player,
-)
+from chapters.mpris_player import Player
 from enum import IntEnum
 from functools import lru_cache
 from typing import Dict, Tuple, TextIO

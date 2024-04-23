@@ -1,18 +1,18 @@
 from typing import Dict
-from chapters.dbus_mpris.player import (
+from .player import (
   Player,
   PlayerConnectionError,
   PlayerCreationError)
-from chapters.dbus_mpris.proxy_player import PlayerProxy
+from .proxy_player import PlayerProxy
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 try:
-    from chapters.dbus_mpris.player_pydbus import Player_pydbus
+    from .player_pydbus import Player_pydbus
 except ImportError:
-    from chapters.dbus_mpris.player_dbus_python import Player_dbus_python
+    from .player_dbus_python import Player_dbus_python
 
 
 class PlayerFactory:
