@@ -4,9 +4,7 @@ from chapters.ui.gui_controller import GuiController
 from functools import partial
 from typing import Tuple, List, Dict, Protocol
 from pathlib import Path
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class AppMainWindow(Protocol):
@@ -24,6 +22,7 @@ class AppGuiBuilder:
         self._gui_controller.set_chapters_filename(chapters_filename)
 
     def create_menu_bar_bindings(self) -> None:
+        logger().debug("Creating menu bar")
         self._view.menu_bar.bind_connect_to_player_command(
             self._gui_controller.handle_connection_command
         )
@@ -41,6 +40,8 @@ class AppGuiBuilder:
     def create_chapters_panel_bindings(
         self, chapters_title: str = "", chapters: Dict[str, str] = {}
     ) -> None:
+        logger().debug("Creating ChaptersPanel bindings")
+
         (
             listbox_items,
             chapters_position_functions,
@@ -52,6 +53,8 @@ class AppGuiBuilder:
     def _build_chapters_listbox_bindings(
         self, chapters: Dict[str, str]
     ) -> Tuple[List[str], List[callable]]:
+        logger().debug("Creating chapters listbox bindings")
+
         listbox_items: List[str] = []
         chapters_position_functions: List[callable] = []
         chapter: str
@@ -75,6 +78,8 @@ class AppGuiBuilder:
         listbox_items: List[str],
         chapters_position_functions: List[callable],
     ) -> None:
+        logger().debug("Creating chapters listbox items")
+
         self._view.set_main_window_title(chapters_title)
         self._view.set_chapters(chapters=listbox_items)
         self._view.bind_chapters_selection_commands(
@@ -82,6 +87,7 @@ class AppGuiBuilder:
         )
 
     def create_player_control_panel_bindings(self) -> None:
+        logger().debug("Creating Player Control Panel bindings")
         button_action_funcs = {
             "Play/Pause": self._gui_controller.play_pause_player,
             ">|": self._gui_controller.next_player,
@@ -108,6 +114,7 @@ class AppGuiBuilder:
         self._view.bind_player_controls_commands(button_action_funcs)
 
     def create_app_window_bindings(self) -> None:
+        logger().debug("Creating Application Window bindings")
         self._view.bind_reload_chapters(self._gui_controller.handle_reload_chapters)
         self._view.bind_clear_chapters(self._gui_controller.handle_clear_chapters)
         self._view.bind_select_player_shortcut(

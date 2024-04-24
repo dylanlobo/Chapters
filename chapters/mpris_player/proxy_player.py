@@ -1,9 +1,7 @@
 from .player import Player
 from functools import cached_property, wraps
 from typing import Any, Dict
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 def reconnect_player(func):
@@ -12,11 +10,11 @@ def reconnect_player(func):
         try:
             func(self, *args, **kwargs)
         except Exception as e:
-            logger.error(type(e))
-            logger.info(e)
-            logger.info("Possible player discconnection, attempting to reconnect")
+            logger().error(type(e))
+            logger().info(e)
+            logger().info("Possible player discconnection, attempting to reconnect")
             self.connect()
-            logger.info(f"Attempting to call {func.__name__} again")
+            logger().info(f"Attempting to call {func.__name__} again")
             func(self, *args, **kwargs)
 
     return decorator
@@ -27,8 +25,8 @@ def handle_player_error(func: callable):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            logger.error("An error occured when attempting to call the player")
-            logger.error(type(e))
+            logger().error("An error occured when attempting to call the player")
+            logger().error(type(e))
             raise
 
     return decorator

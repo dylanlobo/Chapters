@@ -2,9 +2,7 @@ from .player import Player, PlayerConnectionError
 import pydbus
 from typing import Any, Dict, List
 from functools import cached_property
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class Player_pydbus(Player):
@@ -30,8 +28,8 @@ class Player_pydbus(Player):
         try:
             self._proxy = bus.get(self._name, "/org/mpris/MediaPlayer2")
         except KeyError as e:
-            logger.error(e)
-            logger.error(f"Unable to retrieve the {self._name} proxy from dbus.")
+            logger().error(e)
+            logger().error(f"Unable to retrieve the {self._name} proxy from dbus.")
             raise PlayerConnectionError(
                 f"Unable to connect to {self._ext_name},"
                 f" check if {self._ext_name} it is running."
@@ -70,12 +68,12 @@ class Player_pydbus(Player):
         if self._is_object_path_valid(self.trackid):
             self.mpris_player.SetPosition(self.trackid, to_position)
         else:
-            logger.warning(f"The trackid returned by {self.ext_name} is not valid.")
-            logger.debug(
+            logger().warning(f"The trackid returned by {self.ext_name} is not valid.")
+            logger().debug(
                 "Unable to use SetPosition(trackid,postion),"
                 " due to invalid trackid value."
             )
-            logger.debug("Attempting to use Seek() to set the requested postion.")
+            logger().debug("Attempting to use Seek() to set the requested postion.")
             cur_pos = self.position
             seek_to_position = to_position - cur_pos
             self.seek(seek_to_position)
@@ -117,7 +115,7 @@ class Player_pydbus(Player):
         if "mpris:trackid" in self.metadata:
             return self.metadata["mpris:trackid"]
         else:
-            logger.warning(
+            logger().warning(
                 f"Metadata from {self.ext_name} does not contain mpris:trackid\n"
                 f"Returning an empty string instead"
             )

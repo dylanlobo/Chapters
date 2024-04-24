@@ -13,10 +13,7 @@ import chapters.yt_ch as youtube_chapters
 
 import pyclip
 import validators
-from chapters import logger_config
-
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class Direction(IntEnum):
@@ -40,7 +37,7 @@ def get_url_from_clipboard():
         _url = pyclip.paste()
         _url = _url.decode("utf-8")
     except Exception as e:
-        logger.warning(e)
+        logger().warning(e)
     _valid = validators.url(_url)
     if _valid:
         if _url.find("youtu") == -1:
@@ -130,7 +127,7 @@ def chapters_json_to_py(ch_json: str) -> Tuple[str, Dict[str, str]]:
     try:
         json_dict = json.loads(ch_json)
     except json.JSONDecodeError as e:
-        logger.critical(f"Chapters content is not a valid JSON document. {e}")
+        logger().critical(f"Chapters content is not a valid JSON document. {e}")
         raise ValueError(f"Chapters content is not a valid JSON document.{e}")
 
     if json_dict["title"]:
@@ -160,7 +157,7 @@ def load_chapters_file(chapters_file: str | TextIO) -> Tuple[str, Dict[str, str]
     chapters_json = ""
     if isinstance(chapters_file, str):
         if os.path.isfile(chapters_file) is False:
-            logger.error(f"{chapters_file} does not exist")
+            logger().error(f"{chapters_file} does not exist")
             raise FileNotFoundError(f"{chapters_file} does not exist")
         chapters_file = open(chapters_file, "r")
     with chapters_file:
@@ -178,7 +175,7 @@ def save_chapters_file(
     json_str = chapters_py_to_json(title=title, chapters=chapters)
     if isinstance(chapters_file, str):
         if os.path.isfile(chapters_file) is False:
-            logger.error(f"{chapters_file} does not exist")
+            logger().error(f"{chapters_file} does not exist")
             raise FileNotFoundError(f"{chapters_file} does not exist")
         chapters_file = open(chapters_file, "w")
     with chapters_file:

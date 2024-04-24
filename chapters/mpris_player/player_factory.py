@@ -1,9 +1,7 @@
 from typing import Dict
 from .player import Player, PlayerConnectionError, PlayerCreationError
 from .proxy_player import PlayerProxy
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 try:
@@ -29,7 +27,7 @@ class PlayerFactory:
             all_service_names = Player_pydbus.get_service_names()
         except NameError:
             all_service_names = Player_dbus_python.get_service_names()
-            logger.info("Retrieved running services with dbus-python")
+            logger().info("Retrieved running services with dbus-python")
 
         for service in all_service_names:
             if media_player_prefix in service:
@@ -50,16 +48,16 @@ class PlayerFactory:
     def get_player(fq_player_name, short_player_name) -> Player:
         try:
             type(Player_pydbus)
-            logger.debug("Creating a Player_pydbus instance.")
+            logger().debug("Creating a Player_pydbus instance.")
             player = Player_pydbus(fq_player_name, short_player_name)
             return PlayerProxy(player)
         except (NameError, KeyError):
-            logger.debug("Creating a Player_dbus_python instance.")
+            logger().debug("Creating a Player_dbus_python instance.")
             player = Player_dbus_python(fq_player_name, short_player_name)
             return PlayerProxy(player)
         except PlayerConnectionError as per:
             raise PlayerCreationError(per)
         except Exception as e:
-            logger.error(type(e))
-            logger.error(e)
+            logger().error(type(e))
+            logger().error(e)
             raise PlayerCreationError(e)

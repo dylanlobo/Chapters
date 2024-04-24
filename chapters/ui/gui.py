@@ -5,9 +5,7 @@ from pathlib import Path
 import ttkbootstrap as ttk
 import chapters.ui.ch_icon as icon
 from typing import List, Dict, TextIO
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class ChaptersPanel(ttk.LabelFrame):
@@ -249,9 +247,11 @@ class AppMainWindow(ttk.tk.Tk):
         self._player_control_panel = player_control_panel
 
     def _handle_escape_pressed(self, event):
+        logger().debug("Destroying Main Window")
         self.destroy()
 
     def show_display(self):
+        logger().debug("Displaying Main Window")
         self.mainloop()
 
     def set_main_window_title(self, media_title: str):

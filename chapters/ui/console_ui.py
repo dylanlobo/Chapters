@@ -10,9 +10,7 @@ from chapters.mpris_player import (
 )
 from chapters.mpris_player import Player, PlayerFactory
 from chapters import helpers
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class ChaptersMenuConsole:
@@ -51,7 +49,7 @@ class ChaptersMenuConsoleBuilder:
                 chapters_filename
             )
         except FileNotFoundError as fe:
-            logger.error(fe)
+            logger().error(fe)
             raise fe
 
     def build_complete_setup(self) -> None:
@@ -188,7 +186,7 @@ def get_selected_player(running_players: Dict[str, str]) -> Player:
         if not player_names:
             msg = f"{selected_player_name} is not useable. \
             No other mpris enabled players are currently running."
-            logger.error(msg)
+            logger().error(msg)
             raise NoValidMprisPlayersError(msg)
 
         if user_try_another_player():
@@ -217,13 +215,13 @@ def build_console_menu(
         player_names = list(running_players.keys())
         selected_player_name = player_names[0]
         selected_player_fq_name = running_players[selected_player_name]
-        logger.debug("Creating player")
+        logger().debug("Creating player")
         player = PlayerFactory.get_player(selected_player_fq_name, selected_player_name)
-        logger.debug("Created player")
+        logger().debug("Created player")
     else:
-        logger.debug("Requesting user to select a running player")
+        logger().debug("Requesting user to select a running player")
         player = get_selected_player(running_players)
-        logger.debug("Created player")
+        logger().debug("Created player")
     console_builder = ChaptersMenuConsoleBuilder(chapters_file, player)
     if reload_option:
         console_builder.build_reload_chapters_item()

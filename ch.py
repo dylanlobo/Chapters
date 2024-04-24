@@ -8,9 +8,7 @@ to the running player.
 import argparse
 from chapters.ui.console_ui import build_console_menu
 from chapters.ui.gui_builder import AppMainWindow, build_gui
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 def main():
@@ -21,12 +19,10 @@ def main():
         else:
             launch_gui(arguments)
     except FileNotFoundError:
-        print(
+        logger().info(
             "Chapters file not found. Use -h option to learn how to provide a chapters"
             " file."
         )
-    #    except Exception as err:
-    #        logger.error(err)
     return
 
 

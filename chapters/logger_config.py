@@ -30,15 +30,14 @@ LOG_RECORD_BUILTIN_ATTRS = {
 }
 
 
-config_filename = "log_config.json"
-config_file = pathlib.Path(f"./{config_filename}")
-config_initialised = False
+cfg_filename = "log_config.json"
+cfg_file = pathlib.Path(f"./{cfg_filename}")
 
 
 def _get_logging_config() -> Dict:
-    if config_file.is_file():
-        with open(config_file) as cfg_file:
-            config = json.load(cfg_file)
+    if cfg_file.is_file():
+        with open(cfg_file) as cfg_f:
+            config = json.load(cfg_f)
     else:
         config = {
             "version": 1,
@@ -58,6 +57,7 @@ def _get_logging_config() -> Dict:
                     "class": "logging.StreamHandler",
                     "formatter": "simple",
                     "stream": "ext://sys.stdout",
+                    "level": "INFO",
                     "filters": ["no_errors"],
                 },
                 "stderr": {
@@ -67,7 +67,7 @@ def _get_logging_config() -> Dict:
                     "level": "WARNING",
                 },
             },
-            "loggers": {"root": {"level": "INFO", "handlers": ["stdout", "stderr"]}},
+            "loggers": {"root": {"level": "DEBUG", "handlers": ["stdout", "stderr"]}},
         }
     return config
 
@@ -76,17 +76,20 @@ logging_config = _get_logging_config()
 logging.config.dictConfig(logging_config)
 _app_logger = logging.getLogger("chapters_logger")
 
+config_checked = False
+
 
 def _config_loading_check():
-    if not config_file.exists() and not config_initialised:
-        _app_logger.warning(f"No log config file: {config_filename}")
+    global config_checked
+    if not cfg_file.exists() and not config_checked:
+        _app_logger.warning(
+            f"Logger config file {cfg_filename} not found in current working directory."
+        )
         _app_logger.info("Using statically defined log config")
         _app_logger.debug(logging_config)
+    config_checked = True
 
 
-def get_logger():
+def logger():
     _config_loading_check()
     return _app_logger
-
-
-config_initialised = True

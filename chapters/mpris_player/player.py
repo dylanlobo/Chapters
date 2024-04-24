@@ -4,10 +4,7 @@ from abc import ABC, abstractmethod
 import re
 from typing import Any, Dict
 from functools import lru_cache, cached_property
-from chapters import logger_config
-
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class Player(ABC):
@@ -142,10 +139,10 @@ class NoValidMprisPlayersError(Exception):
 class PlayerConnectionError(Exception):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        logger.error("Player connection failed")
+        logger().error("Player connection failed")
 
 
 class PlayerCreationError(Exception):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        logger.error("Player creation failed")
+        logger().error("Player creation failed")

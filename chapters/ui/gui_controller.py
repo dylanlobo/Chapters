@@ -3,9 +3,7 @@ from chapters import helpers
 from chapters.mpris_player import Player
 from chapters.mpris_player import PlayerFactory, PlayerCreationError
 from chapters.mpris_player import PlayerProxy
-from chapters import logger_config
-
-logger = logger_config.get_logger()
+from chapters.logger_config import logger
 
 
 class AppGuiBuilderInterface(Protocol):
@@ -78,15 +76,15 @@ class GuiController:
             player_names = list(running_players.keys())
             selected_player_name = player_names[0]
             selected_player_fq_name = running_players[selected_player_name]
-            logger.debug("Creating player")
+            logger().debug("Creating player")
             try:
                 player = PlayerFactory.get_player(
                     selected_player_fq_name, selected_player_name
                 )
             except PlayerCreationError as e:
-                logger.error(e)
+                logger().error(e)
             else:
-                logger.debug("Created player")
+                logger().debug("Created player")
         return player
 
     def _initialiase_chapters_content(self):
@@ -116,7 +114,7 @@ class GuiController:
                 video=self._chapters_yt_video
             )
         except Exception as e:
-            logger.error(e)
+            logger().error(e)
             raise e
 
     def chapters_listbox_selection_handler(self, event):
@@ -155,7 +153,7 @@ class GuiController:
                 )
                 self._view.set_player_instance_name(new_player_name)
             except PlayerCreationError as e:
-                logger.error(e)
+                logger().error(e)
 
     def load_chapters_file(
         self, chapters_file: str | TextIO
@@ -166,7 +164,7 @@ class GuiController:
                     chapters_file
                 )
             except (FileNotFoundError, ValueError) as e:
-                logger.error(e)
+                logger().error(e)
                 # TODO Implement and make call to view object to display error
                 # message popup before returning
         return self._chapters_title, self._chapters
@@ -205,7 +203,7 @@ class GuiController:
                 video=self._chapters_yt_video
             )
         except Exception as e:
-            logger.error(e)
+            logger().error(e)
             # TODO Implement and make call to view object to display error
             # message popup before returning
             return
