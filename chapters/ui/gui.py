@@ -7,7 +7,7 @@ import chapters.ui.ch_icon as icon
 from typing import List, Dict, TextIO
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 class ChaptersPanel(ttk.LabelFrame):

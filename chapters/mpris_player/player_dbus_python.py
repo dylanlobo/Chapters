@@ -4,7 +4,7 @@ from functools import cached_property
 import dbus
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 class Player_dbus_python(Player):

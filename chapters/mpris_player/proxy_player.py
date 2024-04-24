@@ -3,7 +3,7 @@ from functools import cached_property, wraps
 from typing import Any, Dict
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 def reconnect_player(func):

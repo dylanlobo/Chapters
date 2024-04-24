@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from functools import cached_property
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 class Player_pydbus(Player):

@@ -6,7 +6,7 @@ from typing import Tuple, List, Dict, Protocol
 from pathlib import Path
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 class AppMainWindow(Protocol):

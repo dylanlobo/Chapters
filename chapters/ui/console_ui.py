@@ -12,7 +12,7 @@ from chapters.mpris_player import Player, PlayerFactory
 from chapters import helpers
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 class ChaptersMenuConsole:

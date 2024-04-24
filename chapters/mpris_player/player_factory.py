@@ -3,7 +3,7 @@ from .player import Player, PlayerConnectionError, PlayerCreationError
 from .proxy_player import PlayerProxy
 from chapters import logger_config
 
-logger = logger_config.app_logger
+logger = logger_config.get_logger()
 
 
 try:
