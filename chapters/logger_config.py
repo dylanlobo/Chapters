@@ -82,7 +82,7 @@ config_checked = False
 def _config_loading_check():
     global config_checked
     if not cfg_file.exists() and not config_checked:
-        _app_logger.warning(
+        _app_logger.info(
             f"Logger config file {cfg_filename} not found in current working directory."
         )
         _app_logger.info("Using statically defined log config")
