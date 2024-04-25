@@ -33,12 +33,16 @@ LOG_RECORD_BUILTIN_ATTRS = {
 cfg_filename = "log_config.json"
 cfg_file = pathlib.Path(f"./{cfg_filename}")
 
+config_loading_exception = None
+
 
 def _get_logging_config() -> Dict:
-    if cfg_file.is_file():
+    try:
         with open(cfg_file) as cfg_f:
             config = json.load(cfg_f)
-    else:
+    except Exception as e:
+        global config_loading_exception
+        config_loading_exception = e
         config = {
             "version": 1,
             "disable_existing_loggers": False,
@@ -81,12 +85,16 @@ config_checked = False
 
 def _config_loading_check():
     global config_checked
-    if not cfg_file.exists() and not config_checked:
-        _app_logger.info(
-            f"Logger config file {cfg_filename} not found in current working directory."
-        )
-        _app_logger.info("Using statically defined log config")
-        _app_logger.debug(logging_config)
+    if not config_checked and config_loading_exception is not None:
+        if type(config_loading_exception) is FileNotFoundError:
+            _app_logger.info(
+                f"Logger config file {cfg_filename} not found in current working directory."
+            )
+        else:
+            _app_logger.error("Error encountered when loading logger config file.")
+            _app_logger.error(config_loading_exception)
+            _app_logger.info("Falling back to statically defined log config")
+            _app_logger.debug(logging_config)
     config_checked = True
 
 
