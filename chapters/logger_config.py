@@ -93,8 +93,8 @@ def _config_loading_check():
         else:
             _app_logger.error("Error encountered when loading logger config file.")
             _app_logger.error(config_loading_exception)
-            _app_logger.info("Falling back to statically defined log config")
-            _app_logger.debug(logging_config)
+        _app_logger.info("Falling back to statically defined log config")
+        _app_logger.debug(logging_config)
     config_checked = True
 
 
