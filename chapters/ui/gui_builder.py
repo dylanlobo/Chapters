@@ -123,6 +123,7 @@ class AppGuiBuilder:
         self._view.bind_save_chapters(
             self._gui_controller.handle_save_chapters_file_command
         )
+        self._view.bind_raise_player_window(self._gui_controller.raise_player_window)
 
     def build(self) -> AppMainWindow:
         self.create_menu_bar_bindings()

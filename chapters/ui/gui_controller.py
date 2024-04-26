@@ -6,6 +6,19 @@ from chapters.mpris_player import PlayerProxy
 from chapters.logger_config import logger
 
 
+def ignore_inst_method_args(func):
+    """A decorator function that ignores all arguments sent to class instance's
+    method and calls the instance method with only the default 'self' argument.
+    Useful in cases when a class' instance method is called via a
+    callback, with the expecation that the callback accepts one or more parameters.
+    """
+
+    def decorator(self, *args, **kwargs):
+        func(self)
+
+    return decorator
+
+
 class AppGuiBuilderInterface(Protocol):
     def create_menu_bar_bindings(self): ...
 
@@ -50,6 +63,8 @@ class GuiAppInterface(Protocol):
     def bind_reload_chapters(self, reload_chapters: callable): ...
 
     def bind_clear_chapters(self, clear_chapters: callable): ...
+
+    def bind_raise_player_window(self, raise_player_window: callable): ...
 
     def show_display(self): ...
 
@@ -140,6 +155,10 @@ class GuiController:
 
     def previous_player(self):
         self._cur_player.previous()
+
+    @ignore_inst_method_args
+    def raise_player_window(self):
+        self._cur_player.raise_window()
 
     def handle_connection_command(self, event=None):
         running_player_names = PlayerFactory.get_running_player_names()

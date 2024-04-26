@@ -317,6 +317,9 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_select_player_shortcut(self, select_player: callable):
         self.bind("<s>", select_player)
 
+    def bind_raise_player_window(self, raise_player_window: callable):
+        self.bind("<f>", raise_player_window)
+
     def request_save_chapters_file(
         self, default_filename: str = "chapters.ch"
     ) -> TextIO:
