@@ -100,6 +100,7 @@ def _log_config_loading_exceptions():
 
 if _config_loading_exception is not None:
     _log_config_loading_exceptions()
+_config_loading_exception = None
 
 
 def logger():
