@@ -30,19 +30,24 @@ LOG_RECORD_BUILTIN_ATTRS = {
 }
 
 
-cfg_filename = "log_config.json"
-cfg_file = pathlib.Path(f"./{cfg_filename}")
+_cfg_filename = "log_config.json"
+_cfg_file = pathlib.Path(f"./{_cfg_filename}")
 
-config_loading_exception = None
+_config_loading_exception = None
 
 
 def _get_logging_config() -> Dict:
+    """Setup the logger configuration.
+    Note: Errors/Exceptions that are encountered during logger configuration
+    setup are cached in the global variable 'config_loading_exception'
+    and displayed after the logger has been successfully configured.
+    """
     try:
-        with open(cfg_file) as cfg_f:
+        with open(_cfg_file) as cfg_f:
             config = json.load(cfg_f)
     except Exception as e:
-        global config_loading_exception
-        config_loading_exception = e
+        global _config_loading_exception
+        _config_loading_exception = e
         config = {
             "version": 1,
             "disable_existing_loggers": False,
@@ -80,24 +85,22 @@ logging_config = _get_logging_config()
 logging.config.dictConfig(logging_config)
 _app_logger = logging.getLogger("chapters_logger")
 
-config_checked = False
+
+def _log_config_loading_exceptions():
+    if type(_config_loading_exception) is FileNotFoundError:
+        _app_logger.debug(
+            f"Logger config file {_cfg_filename} not found in current working directory."
+        )
+    else:
+        _app_logger.debug("Error encountered when loading logger config file.")
+        _app_logger.debug(_config_loading_exception)
+    _app_logger.debug("Falling back to statically defined log config")
+    _app_logger.debug(logging_config)
 
 
-def _config_loading_check():
-    global config_checked
-    if not config_checked and config_loading_exception is not None:
-        if type(config_loading_exception) is FileNotFoundError:
-            _app_logger.info(
-                f"Logger config file {cfg_filename} not found in current working directory."
-            )
-        else:
-            _app_logger.error("Error encountered when loading logger config file.")
-            _app_logger.error(config_loading_exception)
-        _app_logger.info("Falling back to statically defined log config")
-        _app_logger.debug(logging_config)
-    config_checked = True
+if _config_loading_exception is not None:
+    _log_config_loading_exceptions()
 
 
 def logger():
-    _config_loading_check()
     return _app_logger
