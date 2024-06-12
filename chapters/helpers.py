@@ -121,6 +121,12 @@ def to_HHMMSS(microsecs: int) -> str:
     return f"{hr_s}:{min_s}:{sec_s}"
 
 
+def sort_chapters_on_time(chapters: Dict[str, str]) -> Dict[str, str]:
+    list_of_chapters = list(chapters.items())
+    list_of_chapters.sort(key=lambda x: x[1])
+    return dict(list_of_chapters)
+
+
 def chapters_json_to_py(ch_json: str) -> Tuple[str, Dict[str, str]]:
     chapters = {}
     title = "No Title"
@@ -138,6 +144,7 @@ def chapters_json_to_py(ch_json: str) -> Tuple[str, Dict[str, str]]:
         chapters = json_dict["chapters"]
     else:
         chapters = {}
+    chapters = sort_chapters_on_time(chapters)
     return title, chapters
 
 
