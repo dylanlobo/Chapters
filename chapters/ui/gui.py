@@ -314,6 +314,9 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_save_chapters(self, save_chapters: callable):
         self.bind("<Control-s>", save_chapters)
 
+    def bind_insert_chapter(self, insert_chapter: callable):
+        self.bind("<Control-i>", insert_chapter)
+
     def bind_select_player_shortcut(self, select_player: callable):
         self.bind("<s>", select_player)
 
@@ -364,6 +367,13 @@ class AppMainWindow(ttk.tk.Tk):
         video = self._yt_video_popup.get_video(url_str)
         return video
 
+    def get_chapter_details(self, chapter_timestamp: str) -> tuple[str, str]:
+        chapter_details_popup = ChapterDetailsPopup(master=self)
+        chapter_name, chapter_timestamp = chapter_details_popup.get_chapter_details(
+            chapter_timestamp
+        )
+        return chapter_name, chapter_timestamp
+
     def select_theme(self) -> str:
         if not self._supported_themes:
             self._supported_themes = self.get_themes()
@@ -372,6 +382,10 @@ class AppMainWindow(ttk.tk.Tk):
         )
         self._selected_theme = self._theme_selection_popup.select_theme()
         self.set_theme(self._selected_theme)
+
+    def show_error_message(self, message: str) -> None:
+        error_message_popup = ErrorMessagePopup(master=self)
+        error_message_popup.show_error_message(message)
 
 
 class YoutubeChaptersPopup:
@@ -617,3 +631,136 @@ class ThemeSelectionPopup:
 
     def _handle_escape_pressed(self, event):
         self._handle_cancel_command()
+
+
+class ChapterDetailsPopup:
+    def __init__(self, master: tk.Tk):
+        self._master: tk.Tk = master
+        self._chapter_name = tk.StringVar()
+        self._chapter_name_return = ""
+        self._chapter_timestamp = tk.StringVar()
+        self._chapter_timestamp_return = ""
+
+    def get_chapter_details(self, chapter_timestamp: str) -> tuple[str, str]:
+        chapter_timestamp = chapter_timestamp if chapter_timestamp else ""
+        self._popup = tk.Toplevel(self._master)
+        self._popup.title("Enter Chapter Details")
+        self._create_chapter_details_panel()
+        self._chapter_timestamp.set(chapter_timestamp)
+        self._popup.bind("<Return>", self._handle_enter_pressed)
+        self._popup.bind("<Escape>", self._handle_escape_pressed)
+        self._popup.resizable(width=False, height=False)
+        self._popup.grid()
+        # set to be on top of the main window
+        self._popup.transient(self._master)
+        # hijack all commands from the master (clicks on the main window are ignored)
+        self._popup.grab_set()
+        self._master.wait_window(
+            self._popup
+        )  # pause anything on the main window until this one closes
+        return (self._chapter_name_return, self._chapter_timestamp_return)
+
+    def _create_chapter_details_panel(self):
+        self._chapter_name_input_panel = ttk.LabelFrame(
+            master=self._popup, text="Chapter Name", width=70
+        )
+        self._chapter_name = tk.StringVar()
+        self._chapter_name_entry = ttk.Entry(
+            master=self._chapter_name_input_panel, textvariable=self._chapter_name
+        )
+        self._chapter_name_entry.grid(padx=5, pady=5)
+        self._chapter_name_input_panel.grid(padx=5, pady=5)
+
+        self._chapter_timestamp_input_panel = ttk.LabelFrame(
+            master=self._popup, text="Time Offset", width=50
+        )
+        self._chapter_timestamp = tk.StringVar()
+        self._chapter_timestamp_entry = ttk.Entry(
+            master=self._chapter_timestamp_input_panel,
+            textvariable=self._chapter_timestamp,
+        )
+        self._chapter_timestamp_entry.grid(padx=5, pady=5)
+        self._chapter_timestamp_input_panel.grid(padx=5, pady=5)
+
+        button_panel = ttk.Frame(master=self._popup)
+        ok_button = ttk.Button(
+            master=button_panel, text="OK", command=self._handle_ok_command
+        )
+        cancel_button = ttk.Button(
+            master=button_panel, text="Cancel", command=self._handle_cancel_command
+        )
+        ok_button.grid(row=0, column=1, padx=10)
+        cancel_button.grid(row=0, column=2, padx=10)
+        ok_button.focus_force()
+        button_panel.grid_columnconfigure(0, weight=1)
+        button_panel.grid_rowconfigure(0, weight=1)
+        button_panel.grid(padx=5, pady=5)
+
+    def _handle_cancel_command(self):
+        self._chapter_name_return = None
+        self._chapter_timestamp_return = None
+        self._popup.destroy()
+
+    def _handle_ok_command(self):
+        self._chapter_name_return = self._chapter_name.get()
+        self._chapter_timestamp_return = self._chapter_timestamp.get()
+        self._popup.destroy()
+
+    def _handle_enter_pressed(self, event):
+        self._handle_ok_command()
+
+    def _handle_escape_pressed(self, event):
+        self._handle_cancel_command()
+
+
+class ErrorMessagePopup:
+    def __init__(self, master: tk.Tk):
+        self._master: tk.Tk = master
+        self._error_message = tk.StringVar()
+
+    def show_error_message(self, error_message: str) -> None:
+        self._error_message.set(error_message)
+        self._popup = tk.Toplevel(self._master)
+        self._popup.title("Error!")
+        self._create_error_message_panel()
+        self._popup.bind("<Return>", self._handle_enter_pressed)
+        self._popup.bind("<Escape>", self._handle_escape_pressed)
+        self._popup.resizable(width=False, height=False)
+        self._popup.grid()
+        # set to be on top of the main window
+        self._popup.transient(self._master)
+        # hijack all commands from the master (clicks on the main window are ignored)
+        self._popup.grab_set()
+        self._master.wait_window(
+            self._popup
+        )  # pause anything on the main window until this one closes
+        return None
+
+    def _create_error_message_panel(self):
+        self._error_message_input_panel = ttk.LabelFrame(
+            master=self._popup, text="Error Details", width=70
+        )
+        self._error_message_label = ttk.Label(
+            master=self._error_message_input_panel, textvariable=self._error_message
+        )
+        self._error_message_label.grid(padx=5, pady=5)
+        self._error_message_input_panel.grid(padx=5, pady=5)
+
+        button_panel = ttk.Frame(master=self._popup)
+        ok_button = ttk.Button(
+            master=button_panel, text="OK", command=self._handle_ok_command
+        )
+        ok_button.grid(row=0, column=1, padx=10)
+        ok_button.focus_force()
+        button_panel.grid_columnconfigure(0, weight=1)
+        button_panel.grid_rowconfigure(0, weight=1)
+        button_panel.grid(padx=5, pady=5)
+
+    def _handle_ok_command(self):
+        self._popup.destroy()
+
+    def _handle_enter_pressed(self, event):
+        self._handle_ok_command()
+
+    def _handle_escape_pressed(self, event):
+        self._handle_ok()

@@ -38,6 +38,8 @@ class GuiAppInterface(Protocol):
 
     def get_youtube_video(self, url_str) -> str: ...
 
+    def get_chapter_details(self, chapter_timestamp: str) -> tuple[str, str]: ...
+
     def set_chapters(self, chapters: List[str]): ...
 
     def set_chapters_file_path(self, chapters_file_path: str): ...
@@ -65,6 +67,8 @@ class GuiAppInterface(Protocol):
     def bind_clear_chapters(self, clear_chapters: callable): ...
 
     def bind_raise_player_window(self, raise_player_window: callable): ...
+
+    def show_error_message(self, message: str) -> None: ...
 
     def show_display(self): ...
 
@@ -226,6 +230,41 @@ class GuiController:
             # TODO Implement and make call to view object to display error
             # message popup before returning
             return
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
+        )
+
+    def handle_insert_chapter(self, event):
+        chapter_timestamp = "00:00:00"
+        if self._cur_player:
+            cur_postion = self._cur_player.position
+            if cur_postion:
+                chapter_timestamp = helpers.to_HHMMSS(cur_postion)
+
+        while True:
+            chapter_name, chapter_timestamp = self._view.get_chapter_details(
+                chapter_timestamp
+            )
+            if not chapter_name and not chapter_timestamp:
+                return
+            if not chapter_name:
+                self._view.show_error_message("Chapter name cannot be empty")
+                continue
+            if not chapter_timestamp:
+                self._view.show_error_message("Chapter timestamp cannot be empty")
+                continue
+            # Convert the timestamp to an int to check for validity
+            try:
+                helpers.to_microsecs(chapter_timestamp)
+            except ValueError:
+                self._view.show_error_message(
+                    f"Invalid timestamp {chapter_timestamp} for chapter {chapter_name}"
+                )
+                continue
+            break
+
+        self._chapters[chapter_name] = chapter_timestamp
+        self._chapters = helpers.sort_chapters_on_time(self._chapters)
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )

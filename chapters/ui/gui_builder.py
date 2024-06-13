@@ -1,23 +1,16 @@
-import chapters.ui.gui as gui
+from chapters.ui.gui import AppMainWindow
 import chapters.helpers as helpers
 from chapters.ui.gui_controller import GuiController
 from functools import partial
-from typing import Tuple, List, Dict, Protocol
+from typing import Tuple, List, Dict
 from pathlib import Path
 from chapters.logger_config import logger
-
-
-class AppMainWindow(Protocol):
-    """The main window protocol class for the application."""
-
-    def show_display(self): ...
 
 
 class AppGuiBuilder:
     def __init__(self, chapters_filename: str):
         self._chapters_filename = chapters_filename
-        self._view: AppMainWindow = None
-        self._view = gui.AppMainWindow()
+        self._view: AppMainWindow = AppMainWindow()
         self._gui_controller = GuiController(self._view, self)
         self._gui_controller.set_chapters_filename(chapters_filename)
 
@@ -120,6 +113,7 @@ class AppGuiBuilder:
         self._view.bind_select_player_shortcut(
             self._gui_controller.handle_connection_command
         )
+        self._view.bind_insert_chapter(self._gui_controller.handle_insert_chapter)
         self._view.bind_save_chapters(
             self._gui_controller.handle_save_chapters_file_command
         )
