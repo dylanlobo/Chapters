@@ -68,6 +68,13 @@ class ChaptersPanel(ttk.LabelFrame):
             index = selection[0]
             self._chapter_selection_action_functs[index]()
 
+    def get_selected_chapter_index(self) -> int | None:
+        selected_indices = self._lb.curselection()
+        if selected_indices:
+            # Return the first (and only) selected index
+            return selected_indices[0]
+        return None
+
 
 def ignore_arguments(func):
     """A decorator function that ignores all arguments and calls a function
@@ -317,6 +324,9 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_insert_chapter(self, insert_chapter: callable):
         self.bind("<Control-i>", insert_chapter)
 
+    def bind_edit_chapter(self, edit_chapter: callable):
+        self.bind("<F2>", edit_chapter)
+
     def bind_select_player_shortcut(self, select_player: callable):
         self.bind("<s>", select_player)
 
@@ -375,6 +385,9 @@ class AppMainWindow(ttk.tk.Tk):
             chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
         )
         return chapter_name, chapter_timestamp
+
+    def get_selected_chapter_index(self) -> int:
+        return self._chapters_panel.get_selected_chapter_index()
 
     def select_theme(self) -> str:
         if not self._supported_themes:

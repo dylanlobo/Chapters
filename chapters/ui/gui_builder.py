@@ -114,6 +114,7 @@ class AppGuiBuilder:
             self._gui_controller.handle_connection_command
         )
         self._view.bind_insert_chapter(self._gui_controller.handle_insert_chapter)
+        self._view.bind_edit_chapter(self._gui_controller.handle_edit_chapter)
         self._view.bind_save_chapters(
             self._gui_controller.handle_save_chapters_file_command
         )

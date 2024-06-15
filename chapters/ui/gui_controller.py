@@ -236,13 +236,19 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def _update_chapter_details(self, chapter_name: str, chapter_timestamp: str):
+    def _update_chapter_details(
+        self, suggested_chapter_name: str, suggestd_chapter_timestamp: str
+    ) -> tuple[str, str]:
+        chapter_name, chapter_timestamp = (
+            suggested_chapter_name,
+            suggestd_chapter_timestamp,
+        )
         while True:
             chapter_name, chapter_timestamp = self._view.get_chapter_details(
                 chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
             )
             if not chapter_name and not chapter_timestamp:
-                return
+                break
             if not chapter_name:
                 self._view.show_error_message("Chapter name cannot be empty")
                 continue
@@ -258,12 +264,7 @@ class GuiController:
                 )
                 continue
             break
-
-        self._chapters[chapter_name] = chapter_timestamp
-        self._chapters = helpers.sort_chapters_on_time(self._chapters)
-        self._gui_builder.create_chapters_panel_bindings(
-            self._chapters_title, self._chapters
-        )
+        return chapter_name, chapter_timestamp
 
     def handle_insert_chapter(self, event):
         cur_position = "00:00:00"
@@ -273,7 +274,38 @@ class GuiController:
                 cur_position = helpers.to_HHMMSS(cur_postion)
         chapter_timestamp = cur_position
         chapter_name = ""
-        self._update_chapter_details(chapter_name, chapter_timestamp)
+        chapter_name, chapter_timestamp = self._update_chapter_details(
+            chapter_name, chapter_timestamp
+        )
+        if not chapter_name and not chapter_timestamp:
+            return
+        self._chapters[chapter_name] = chapter_timestamp
+        self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
+        )
+
+    def handle_edit_chapter(self, event):
+        selected_chapter_index = self._view.get_selected_chapter_index()
+        if selected_chapter_index is None:
+            return
+        chapters_list = list(self._chapters.items())
+        chapter_name, chapter_timestamp = chapters_list[selected_chapter_index]
+        chapter_name, chapter_timestamp = self._update_chapter_details(
+            suggested_chapter_name=chapter_name,
+            suggestd_chapter_timestamp=chapter_timestamp,
+        )
+        if not chapter_name and not chapter_timestamp:
+            return
+        if chapter_name in self._chapters:
+            self._chapters[chapter_name] = chapter_timestamp
+        else:
+            chapters_list[selected_chapter_index] = (chapter_name, chapter_timestamp)
+            self._chapters = dict(chapters_list)
+        self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
+        )
 
     def handle_reload_chapters(self, event):
         if self._chapters_filename:
