@@ -236,14 +236,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_insert_chapter(self, event):
-        cur_position = "00:00:00"
-        if self._cur_player:
-            cur_postion = self._cur_player.position
-            if cur_postion:
-                cur_position = helpers.to_HHMMSS(cur_postion)
-        chapter_timestamp = cur_position
-        chapter_name = ""
+    def _update_chapter_details(self, chapter_name: str, chapter_timestamp: str):
         while True:
             chapter_name, chapter_timestamp = self._view.get_chapter_details(
                 chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
@@ -271,6 +264,16 @@ class GuiController:
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+
+    def handle_insert_chapter(self, event):
+        cur_position = "00:00:00"
+        if self._cur_player:
+            cur_postion = self._cur_player.position
+            if cur_postion:
+                cur_position = helpers.to_HHMMSS(cur_postion)
+        chapter_timestamp = cur_position
+        chapter_name = ""
+        self._update_chapter_details(chapter_name, chapter_timestamp)
 
     def handle_reload_chapters(self, event):
         if self._chapters_filename:
