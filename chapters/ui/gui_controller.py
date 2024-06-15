@@ -38,7 +38,9 @@ class GuiAppInterface(Protocol):
 
     def get_youtube_video(self, url_str) -> str: ...
 
-    def get_chapter_details(self, chapter_timestamp: str) -> tuple[str, str]: ...
+    def get_chapter_details(
+        self, chapter_name: str = "", chapter_timestamp: str = ""
+    ) -> tuple[str, str]: ...
 
     def set_chapters(self, chapters: List[str]): ...
 
@@ -235,15 +237,16 @@ class GuiController:
         )
 
     def handle_insert_chapter(self, event):
-        chapter_timestamp = "00:00:00"
+        cur_position = "00:00:00"
         if self._cur_player:
             cur_postion = self._cur_player.position
             if cur_postion:
-                chapter_timestamp = helpers.to_HHMMSS(cur_postion)
-
+                cur_position = helpers.to_HHMMSS(cur_postion)
+        chapter_timestamp = cur_position
+        chapter_name = ""
         while True:
             chapter_name, chapter_timestamp = self._view.get_chapter_details(
-                chapter_timestamp
+                chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
             )
             if not chapter_name and not chapter_timestamp:
                 return

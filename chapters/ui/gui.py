@@ -367,10 +367,12 @@ class AppMainWindow(ttk.tk.Tk):
         video = self._yt_video_popup.get_video(url_str)
         return video
 
-    def get_chapter_details(self, chapter_timestamp: str) -> tuple[str, str]:
+    def get_chapter_details(
+        self, chapter_name: str = "", chapter_timestamp: str = ""
+    ) -> tuple[str, str]:
         chapter_details_popup = ChapterDetailsPopup(master=self)
         chapter_name, chapter_timestamp = chapter_details_popup.get_chapter_details(
-            chapter_timestamp
+            chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
         )
         return chapter_name, chapter_timestamp
 
@@ -641,12 +643,14 @@ class ChapterDetailsPopup:
         self._chapter_timestamp = tk.StringVar()
         self._chapter_timestamp_return = ""
 
-    def get_chapter_details(self, chapter_timestamp: str) -> tuple[str, str]:
-        chapter_timestamp = chapter_timestamp if chapter_timestamp else ""
+    def get_chapter_details(
+        self, chapter_name: str = "", chapter_timestamp: str = ""
+    ) -> tuple[str, str]:
         self._popup = tk.Toplevel(self._master)
         self._popup.title("Enter Chapter Details")
         self._create_chapter_details_panel()
         self._chapter_timestamp.set(chapter_timestamp)
+        self._chapter_name.set(chapter_name)
         self._popup.bind("<Return>", self._handle_enter_pressed)
         self._popup.bind("<Escape>", self._handle_escape_pressed)
         self._popup.resizable(width=False, height=False)
