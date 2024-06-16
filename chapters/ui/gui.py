@@ -157,7 +157,7 @@ class AppMenuBar(tk.Menu):
 
     def bind_connect_to_player_command(self, connect_player_command: callable):
         self._connection_menu.add_command(
-            label="Select a player ...", command=connect_player_command, underline=0
+            label="Connect ...", command=connect_player_command, underline=0
         )
 
     def bind_disconnect_player_command(self, disconnect_player_command: callable):

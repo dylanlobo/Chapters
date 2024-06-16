@@ -75,6 +75,21 @@ class GuiAppInterface(Protocol):
     def show_display(self): ...
 
 
+def handle_player_error(func: callable):
+    def decorator(self, *args, **kwargs):
+        try:
+            func(self, *args, **kwargs)
+        except Exception as e:
+            logger().error("An error occured when attempting to call the player")
+            logger().error(type(e))
+            self._view.show_error_message(
+                "An error occurred in the currently connected player.\n"
+                "Kindly try reconnecting or disconnecting to avoid this error message"
+            )
+
+    return decorator
+
+
 class GuiController:
     def __init__(
         self,
@@ -144,24 +159,30 @@ class GuiController:
             index = selection[0]
             self._chapter_selection_action_functs[index]()
 
+    @handle_player_error
     def set_player_position(self, position: str):
         self._cur_player.set_position(helpers.to_microsecs(position))
 
+    @handle_player_error
     def skip_player(
         self, offset: str, direction: helpers.Direction = helpers.Direction.FORWARD
     ):
         offset_with_dir = helpers.to_microsecs(offset) * direction
         self._cur_player.seek(offset_with_dir)
 
+    @handle_player_error
     def play_pause_player(self):
         self._cur_player.play_pause()
 
+    @handle_player_error
     def next_player(self):
         self._cur_player.next()
 
+    @handle_player_error
     def previous_player(self):
         self._cur_player.previous()
 
+    @handle_player_error
     @ignore_inst_method_args
     def raise_player_window(self):
         self._cur_player.raise_window()
@@ -194,8 +215,11 @@ class GuiController:
                 )
             except (FileNotFoundError, ValueError) as e:
                 logger().error(e)
-                # TODO Implement and make call to view object to display error
-                # message popup before returning
+                self._view.show_error_message(
+                    f"An error occurred when attempting to load {chapters_file.name}.\n"
+                    "Kindly ensure the file exists and is in the correct format.\n"
+                    "Check the log output for more details."
+                )
         return self._chapters_title, self._chapters
 
     def handle_save_chapters_file_command(self, even=None):
@@ -233,8 +257,12 @@ class GuiController:
             )
         except Exception as e:
             logger().error(e)
-            # TODO Implement and make call to view object to display error
-            # message popup before returning
+            self._view.show_error_message(
+                "An error occurred when attempting retrieve chapters from:\n"
+                f"{video_name}\n"
+                "Kindly ensure the secified video exists and is correctly specified\n"
+                "Check the log output for more details."
+            )
             return
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
