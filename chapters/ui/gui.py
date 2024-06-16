@@ -160,6 +160,11 @@ class AppMenuBar(tk.Menu):
             label="Select a player ...", command=connect_player_command, underline=0
         )
 
+    def bind_disconnect_player_command(self, disconnect_player_command: callable):
+        self._connection_menu.add_command(
+            label="Disconnect", command=disconnect_player_command, underline=0
+        )
+
     def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
         self._chapters_menu.add_command(
             label="Save chapters file ...",

@@ -166,6 +166,10 @@ class GuiController:
     def raise_player_window(self):
         self._cur_player.raise_window()
 
+    def handle_disconnection_command(self):
+        self._cur_player = PlayerProxy(None)
+        self._view.set_player_instance_name(None)
+
     def handle_connection_command(self, event=None):
         running_player_names = PlayerFactory.get_running_player_names()
         new_player_name = self._view.select_new_player(
@@ -267,12 +271,23 @@ class GuiController:
         return chapter_name, chapter_timestamp
 
     def handle_insert_chapter(self, event):
-        cur_position = "00:00:00"
-        if self._cur_player:
-            cur_postion = self._cur_player.position
-            if cur_postion:
-                cur_position = helpers.to_HHMMSS(cur_postion)
-        chapter_timestamp = cur_position
+        cur_position = 0
+        try:
+            cur_position = self._cur_player.position
+        except Exception as e:
+            logger().warning("Unable to get player position")
+            logger().warning(e)
+            self._view.show_error_message(
+                "An error occurred in the currently connected player.\n"
+                "Kindly try reconnecting or disconnecting to avoid this error message"
+            )
+        # Set the current position to 0 when no player is connected
+        # When no player is connected, the default "empty" PlayerProxy returns None
+        # for the position
+        if not cur_position:
+            cur_position = 0
+
+        chapter_timestamp = helpers.to_HHMMSS(cur_position)
         chapter_name = ""
         chapter_name, chapter_timestamp = self._update_chapter_details(
             chapter_name, chapter_timestamp

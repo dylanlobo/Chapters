@@ -19,6 +19,9 @@ class AppGuiBuilder:
         self._view.menu_bar.bind_connect_to_player_command(
             self._gui_controller.handle_connection_command
         )
+        self._view.menu_bar.bind_disconnect_player_command(
+            self._gui_controller.handle_disconnection_command
+        )
         self._view.menu_bar.bind_load_chapters_file_command(
             self._gui_controller.handle_load_chapters_file_command
         )
