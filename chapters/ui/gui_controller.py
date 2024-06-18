@@ -42,6 +42,8 @@ class GuiAppInterface(Protocol):
         self, chapter_name: str = "", chapter_timestamp: str = ""
     ) -> tuple[str, str]: ...
 
+    def get_jump_to_position_timestamp(self) -> str: ...
+
     def set_chapters(self, chapters: List[str]): ...
 
     def set_chapters_file_path(self, chapters_file_path: str): ...
@@ -349,6 +351,24 @@ class GuiController:
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+
+    def handle_jump_to_position(self, event):
+        position_timestamp = "00:00:00"
+        while True:
+            position_timestamp = self._view.get_jump_to_position_timestamp()
+            if position_timestamp is None:
+                return
+            if position_timestamp == "":
+                self._view.show_error_message("Position timestamp cannot be empty")
+                continue
+            # Convert the timestamp to an int to check for validity
+            try:
+                helpers.to_microsecs(position_timestamp)
+            except ValueError:
+                self._view.show_error_message(f"Invalid timestamp {position_timestamp}")
+                continue
+            self.set_player_position(position_timestamp)
+            break
 
     def handle_reload_chapters(self, event):
         if self._chapters_filename:

@@ -118,6 +118,7 @@ class AppGuiBuilder:
         )
         self._view.bind_insert_chapter(self._gui_controller.handle_insert_chapter)
         self._view.bind_edit_chapter(self._gui_controller.handle_edit_chapter)
+        self._view.bind_jump_to_position(self._gui_controller.handle_jump_to_position)
         self._view.bind_save_chapters(
             self._gui_controller.handle_save_chapters_file_command
         )

@@ -332,6 +332,9 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_edit_chapter(self, edit_chapter: callable):
         self.bind("<F2>", edit_chapter)
 
+    def bind_jump_to_position(self, jump_to_position: callable):
+        self.bind("<Control-j>", jump_to_position)
+
     def bind_select_player_shortcut(self, select_player: callable):
         self.bind("<s>", select_player)
 
@@ -381,6 +384,10 @@ class AppMainWindow(ttk.tk.Tk):
         self._yt_video_popup = YoutubeChaptersPopup(master=self)
         video = self._yt_video_popup.get_video(url_str)
         return video
+
+    def get_jump_to_position_timestamp(self) -> str:
+        jump_to_position_popup = JumpToPositionPopup(master=self)
+        return jump_to_position_popup.get_jump_to_position_timestamp()
 
     def get_chapter_details(
         self, chapter_name: str = "", chapter_timestamp: str = ""
@@ -735,6 +742,70 @@ class ChapterDetailsPopup:
         self._handle_cancel_command()
 
 
+class JumpToPositionPopup:
+    def __init__(self, master: tk.Tk):
+        self._master: tk.Tk = master
+        self._postion_timestamp = tk.StringVar()
+        self._postion_timestamp.set("00:00:00")
+        self._position_timestamp_return = ""
+
+    def get_jump_to_position_timestamp(self) -> str:
+        self._popup = tk.Toplevel(self._master)
+        self._popup.title("Jump To Postion")
+        self._create_jump_to_position_panel()
+        self._popup.bind("<Return>", self._handle_enter_pressed)
+        self._popup.bind("<Escape>", self._handle_escape_pressed)
+        self._popup.resizable(width=False, height=False)
+        self._popup.grid()
+        # set to be on top of the main window
+        self._popup.transient(self._master)
+        # hijack all commands from the master (clicks on the main window are ignored)
+        self._popup.grab_set()
+        self._master.wait_window(
+            self._popup
+        )  # pause anything on the main window until this one closes
+        return self._position_timestamp_return
+
+    def _create_jump_to_position_panel(self):
+        self._chapter_timestamp_input_panel = ttk.LabelFrame(
+            master=self._popup, text="Time Offset", width=50
+        )
+        self._chapter_timestamp_entry = ttk.Entry(
+            master=self._chapter_timestamp_input_panel,
+            textvariable=self._postion_timestamp,
+        )
+        self._chapter_timestamp_entry.grid(padx=5, pady=5)
+        self._chapter_timestamp_input_panel.grid(padx=5, pady=5)
+
+        button_panel = ttk.Frame(master=self._popup)
+        ok_button = ttk.Button(
+            master=button_panel, text="OK", command=self._handle_ok_command
+        )
+        cancel_button = ttk.Button(
+            master=button_panel, text="Cancel", command=self._handle_cancel_command
+        )
+        ok_button.grid(row=0, column=1, padx=10)
+        cancel_button.grid(row=0, column=2, padx=10)
+        ok_button.focus_force()
+        button_panel.grid_columnconfigure(0, weight=1)
+        button_panel.grid_rowconfigure(0, weight=1)
+        button_panel.grid(padx=5, pady=5)
+
+    def _handle_cancel_command(self):
+        self._position_timestamp_return = None
+        self._popup.destroy()
+
+    def _handle_ok_command(self):
+        self._position_timestamp_return = self._postion_timestamp.get()
+        self._popup.destroy()
+
+    def _handle_enter_pressed(self, event):
+        self._handle_ok_command()
+
+    def _handle_escape_pressed(self, event):
+        self._handle_cancel_command()
+
+
 class ErrorMessagePopup:
     def __init__(self, master: tk.Tk):
         self._master: tk.Tk = master
@@ -785,4 +856,4 @@ class ErrorMessagePopup:
         self._handle_ok_command()
 
     def _handle_escape_pressed(self, event):
-        self._handle_ok()
+        self._handle_ok_command()
