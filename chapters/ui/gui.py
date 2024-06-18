@@ -462,7 +462,7 @@ class YoutubeChaptersPopup:
         )
         ok_button.grid(row=0, column=1, padx=10)
         cancel_button.grid(row=0, column=2, padx=10)
-        ok_button.focus_force()
+        ok_button.focus()
         button_panel.grid_columnconfigure(0, weight=1)
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(padx=5, pady=5)
@@ -560,7 +560,7 @@ class PlayerConnectionPopup:
         button_panel.grid_columnconfigure(0, weight=1)
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(pady=10)
-        self._players_listbox.focus_force()
+        self._players_listbox.focus()
 
     def _handle_connect_command(self):
         self._selected_player_name = self._players_listbox.get(tk.ACTIVE)
@@ -629,18 +629,18 @@ class ThemeSelectionPopup:
         themes_panel.grid(padx=0, pady=5)
 
         button_panel = tk.Frame(master=self._popup)
-        connect_button = ttk.Button(
+        select_button = ttk.Button(
             master=button_panel, text="Select", command=self._handle_selection_command
         )
         cancel_button = ttk.Button(
             master=button_panel, text="Cancel", command=self._handle_cancel_command
         )
-        connect_button.grid(row=0, column=1, padx=10)
+        select_button.grid(row=0, column=1, padx=10)
         cancel_button.grid(row=0, column=2, padx=10)
         button_panel.grid_columnconfigure(0, weight=1)
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(pady=10)
-        connect_button.focus_force()
+        self._themes_listbox.focus()
 
     def _handle_selection_command(self):
         self._selected_theme = self._themes_listbox.get(tk.ACTIVE)
@@ -720,7 +720,7 @@ class ChapterDetailsPopup:
         )
         ok_button.grid(row=0, column=1, padx=10)
         cancel_button.grid(row=0, column=2, padx=10)
-        ok_button.focus_force()
+        self._chapter_name_entry.focus()
         button_panel.grid_columnconfigure(0, weight=1)
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(padx=5, pady=5)
@@ -786,7 +786,7 @@ class JumpToPositionPopup:
         )
         ok_button.grid(row=0, column=1, padx=10)
         cancel_button.grid(row=0, column=2, padx=10)
-        ok_button.focus_force()
+        self._chapter_timestamp_entry.focus()
         button_panel.grid_columnconfigure(0, weight=1)
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(padx=5, pady=5)
@@ -844,7 +844,7 @@ class ErrorMessagePopup:
             master=button_panel, text="OK", command=self._handle_ok_command
         )
         ok_button.grid(row=0, column=1, padx=10)
-        ok_button.focus_force()
+        ok_button.focus()
         button_panel.grid_columnconfigure(0, weight=1)
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(padx=5, pady=5)
