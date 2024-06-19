@@ -330,6 +330,16 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
+    def handle_delete_chapter(self, event):
+        selected_chapter_index = self._view.get_selected_chapter_index()
+        if selected_chapter_index is None:
+            return
+        del self._chapters[list(self._chapters.keys())[selected_chapter_index]]
+        self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
+        )
+
     def handle_edit_chapter(self, event):
         selected_chapter_index = self._view.get_selected_chapter_index()
         if selected_chapter_index is None:

@@ -27,29 +27,30 @@ class ChaptersPanel(ttk.LabelFrame):
         horizontal_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
 
         lb_height = 11
-        self._lb = tk.Listbox(
+        self._chapters_lb = tk.Listbox(
             self,
             listvariable=tk.StringVar(value=chapters),
             height=lb_height,
             yscrollcommand=vertical_scrollbar.set,
             xscrollcommand=horizontal_scrollbar.set,
         )
-        self._chapters_lb = self._lb
-        self._lb.pack(fill=tk.BOTH, expand=True)
+        self._chapters_lb.pack(fill=tk.BOTH, expand=True)
         self.pack(fill=tk.BOTH, padx=5, pady=5, expand=True)
 
         # Configure the scrollbars to control the listbox
-        vertical_scrollbar.config(command=self._lb.yview)
-        horizontal_scrollbar.config(command=self._lb.xview)
+        vertical_scrollbar.config(command=self._chapters_lb.yview)
+        horizontal_scrollbar.config(command=self._chapters_lb.xview)
 
         # Key Bindings
-        self._lb.bind("<Return>", self.lb_selection_handler)
-        self._lb.bind("<Button-3>", self.lb_right_button_handler)
-        self._lb.bind("<Button-3>", self.lb_selection_handler, add="+")
+        self._chapters_lb.bind("<Return>", self.lb_selection_handler)
+        self._chapters_lb.bind("<Button-3>", self.lb_right_button_handler)
+        self._chapters_lb.bind("<Button-3>", self.lb_selection_handler, add="+")
 
     def set_chapters(self, chapters: List[str]):
         self._chapters_lb.delete(0, tk.END)
         self._chapters_lb.insert(tk.END, *chapters)
+        self._chapters_lb.selection_clear(0, tk.END)
+        self._chapters_lb.selection_set(0)
 
     def bind_chapters_selection_commands(
         self, chapters_selection_action_functs: List[callable]
@@ -57,10 +58,10 @@ class ChaptersPanel(ttk.LabelFrame):
         self._chapter_selection_action_functs = chapters_selection_action_functs
 
     def lb_right_button_handler(self, event):
-        self._lb.selection_clear(0, tk.END)
-        self._lb.focus_set()
-        self._lb.selection_set(self._lb.nearest(event.y))
-        self._lb.activate(self._lb.nearest(event.y))
+        self._chapters_lb.selection_clear(0, tk.END)
+        self._chapters_lb.focus_set()
+        self._chapters_lb.selection_set(self._chapters_lb.nearest(event.y))
+        self._chapters_lb.activate(self._chapters_lb.nearest(event.y))
 
     def lb_selection_handler(self, event):
         selection = event.widget.curselection()
@@ -69,7 +70,7 @@ class ChaptersPanel(ttk.LabelFrame):
             self._chapter_selection_action_functs[index]()
 
     def get_selected_chapter_index(self) -> int | None:
-        selected_indices = self._lb.curselection()
+        selected_indices = self._chapters_lb.curselection()
         if selected_indices:
             # Return the first (and only) selected index
             return selected_indices[0]
@@ -331,6 +332,9 @@ class AppMainWindow(ttk.tk.Tk):
 
     def bind_edit_chapter(self, edit_chapter: callable):
         self.bind("<F2>", edit_chapter)
+
+    def bind_delete_chapter(self, delete_chapter: callable):
+        self.bind("<Delete>", delete_chapter)
 
     def bind_jump_to_position(self, jump_to_position: callable):
         self.bind("<Control-j>", jump_to_position)
