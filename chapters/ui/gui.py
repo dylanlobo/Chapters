@@ -416,7 +416,7 @@ class AppMainWindow(ttk.tk.Tk):
 
     def show_error_message(self, message: str) -> None:
         error_message_popup = ErrorMessagePopup(master=self)
-        error_message_popup.show_error_message(message)
+        error_message_popup.show_message(message)
 
 
 class YoutubeChaptersPopup:
@@ -810,38 +810,40 @@ class JumpToPositionPopup:
         self._handle_cancel_command()
 
 
-class ErrorMessagePopup:
-    def __init__(self, master: tk.Tk):
+class MessagePopup:
+    def __init__(
+        self,
+        master: tk.Tk,
+        title="Message",
+        message_content_description="Message Details",
+        message_content="",
+    ):
         self._master: tk.Tk = master
-        self._error_message = tk.StringVar()
+        self._message = tk.StringVar()
+        self._message_content_descrition = message_content_description
+        self._message_title = title
+        self._message_content = message_content
 
-    def show_error_message(self, error_message: str) -> None:
-        self._error_message.set(error_message)
+    def _create_message_box(self):
         self._popup = tk.Toplevel(self._master)
-        self._popup.title("Error!")
-        self._create_error_message_panel()
+        self._popup.title(self._message_title)
+        self._create_message_panel()
         self._popup.bind("<Return>", self._handle_enter_pressed)
         self._popup.bind("<Escape>", self._handle_escape_pressed)
         self._popup.resizable(width=False, height=False)
         self._popup.grid()
         # set to be on top of the main window
         self._popup.transient(self._master)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        self._master.wait_window(
-            self._popup
-        )  # pause anything on the main window until this one closes
-        return None
 
-    def _create_error_message_panel(self):
-        self._error_message_input_panel = ttk.LabelFrame(
-            master=self._popup, text="Error Details", width=70
+    def _create_message_panel(self):
+        self._message_input_panel = ttk.LabelFrame(
+            master=self._popup, text=self._message_content_descrition, width=70
         )
         self._error_message_label = ttk.Label(
-            master=self._error_message_input_panel, textvariable=self._error_message
+            master=self._message_input_panel, textvariable=self._message
         )
         self._error_message_label.grid(padx=5, pady=5)
-        self._error_message_input_panel.grid(padx=5, pady=5)
+        self._message_input_panel.grid(padx=5, pady=5)
 
         button_panel = ttk.Frame(master=self._popup)
         ok_button = ttk.Button(
@@ -861,3 +863,51 @@ class ErrorMessagePopup:
 
     def _handle_escape_pressed(self, event):
         self._handle_ok_command()
+
+    def show_message(self, message: str | None = None) -> None:
+        self._create_message_box()
+        if message:
+            self._message.set(message)
+        else:
+            self._message.set(self._message_content)
+        # hijack all commands from the master (clicks on the main window are ignored)
+        self._popup.grab_set()
+        self._master.wait_window(
+            self._popup
+        )  # pause anything on the main window until this one closes
+        return None
+
+
+class ErrorMessagePopup:
+    def __init__(
+        self,
+        master: tk.Tk,
+    ):
+        self._popup = MessagePopup(
+            master=master,
+            title="Error Message",
+            message_content_description="Error Details",
+        )
+
+    def show_message(self, message: str | None = None) -> None:
+        self._popup.show_message(message=message)
+
+
+class KeyboardShortcutsPopup:
+    def __init__(
+        self,
+        master: tk.Tk,
+    ):
+        self._popup = MessagePopup(
+            master=master,
+            title="Help",
+            message_content_description="Keyboard Shortcuts",
+            message_content=self._shortcuts,
+        )
+        self._define_shortcuts()
+
+    def _define_shortcuts(self):
+        self._shortcuts = "<Control-l> : Clear Chapters"
+
+    def show_message(self, message: str | None = None) -> None:
+        self._popup.show_message(message=self._shortcuts)
