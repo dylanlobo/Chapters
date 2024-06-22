@@ -494,16 +494,23 @@ class PlayerConnectionPopup:
     def __init__(self, master: tk.Tk):
         self._master: tk.Tk = master
         self._selected_player_name: str = None
+        self._title: str = "Connect to Player"
 
-    def select_new_player_name(self, running_player_names: List[str]) -> str:
+    def select_new_player_name(self, running_player_names: List[str]) -> str | None:
+        if not running_player_names:
+            msg_popup = MessagePopup(
+                master=self._master,
+                title=self._title,
+                message_content_description="Message",
+                message_content="No MPRIS enabled media players are currently running!",
+            )
+            msg_popup.show_message()
+            return None
         self._popup = tk.Toplevel(self._master)
-        self._popup.title("Connect to Player")
+        self._popup.title(self._title)
         self._popup.bind("<Return>", self._handle_enter_pressed)
         self._popup.bind("<Escape>", self._handle_escape_pressed)
-        if not running_player_names:
-            self._create_error_message_panel()
-        else:
-            self._create_players_selection_panel(running_player_names)
+        self._create_players_selection_panel(running_player_names)
         self._popup.resizable(width=False, height=False)
         self._popup.grid()
         # set to be on top of the main window
@@ -513,19 +520,6 @@ class PlayerConnectionPopup:
         # pause anything on the main window until this one closes
         self._master.wait_window(self._popup)
         return self._selected_player_name
-
-    def _create_error_message_panel(self):
-        message_panel = ttk.Frame(master=self._popup)
-        message = ttk.Label(
-            master=message_panel,
-            text="No MPRIS enabled media players are currently running!",
-        )
-        ok_button = ttk.Button(
-            master=message_panel, text="OK", command=self._handle_ok_command
-        )
-        message.grid(row=0, column=0, padx=5, pady=5)
-        ok_button.grid(row=1, column=0, padx=10, pady=5)
-        message_panel.grid()
 
     def _create_players_selection_panel(self, running_player_names: List[str]):
         players_panel = ttk.LabelFrame(master=self._popup, text="Players")
