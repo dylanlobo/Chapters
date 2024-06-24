@@ -275,7 +275,10 @@ class AppMainWindow(ttk.tk.Tk):
 
     def get_themes(self):
         s = ttk.Style()
-        return s.theme_names()
+        themes = s.theme_names()
+        sorted_themes = list(themes)
+        sorted_themes.sort()
+        return sorted_themes
 
     def set_theme(self, theme_name: str):
         if theme_name:
