@@ -4,6 +4,12 @@ from pathlib import Path
 
 import ttkbootstrap as ttk
 import chapters.ui.ch_icon as icon
+from chapters.ui.gui_popups import (
+    EntryFieldsPopup,
+    ListSelectionPopup,
+    MessagePopup,
+    ErrorMessagePopup,
+)
 from typing import List, Dict, TextIO
 from chapters.logger_config import logger
 
@@ -384,12 +390,23 @@ class AppMainWindow(ttk.tk.Tk):
         return selected_chapters_file
 
     def select_new_player(self, running_player_names: List[str]) -> str:
-        self.popup = PlayerConnectionPopup(master=self)
-        return self.popup.select_new_player_name(running_player_names)
+        if not running_player_names:
+            msg_popup = MessagePopup(
+                master=self,
+                title="Connect to Player",
+                message_content_description="Message",
+                message_content="No MPRIS enabled media players are currently running!",
+            )
+            msg_popup.show_message()
+            return
+        self.popup = PlayerConnectionPopup(
+            master=self, running_player_names=running_player_names
+        )
+        return self.popup.select_new_player_name()
 
     def get_youtube_video(self, url_str) -> str:
-        self._yt_video_popup = YoutubeChaptersPopup(master=self)
-        video = self._yt_video_popup.get_video(url_str)
+        self._yt_video_popup = YoutubeChaptersPopup(master=self, video_url=url_str)
+        video = self._yt_video_popup.get_video()
         return video
 
     def get_jump_to_position_timestamp(self) -> str:
@@ -398,11 +415,11 @@ class AppMainWindow(ttk.tk.Tk):
 
     def get_chapter_details(
         self, chapter_name: str = "", chapter_timestamp: str = ""
-    ) -> tuple[str, str]:
-        chapter_details_popup = ChapterDetailsPopup(master=self)
-        chapter_name, chapter_timestamp = chapter_details_popup.get_chapter_details(
-            chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
+    ) -> List[str]:
+        chapter_details_popup = ChapterDetailsPopup(
+            master=self, chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
         )
+        chapter_name, chapter_timestamp = chapter_details_popup.get_chapter_details()
         return chapter_name, chapter_timestamp
 
     def get_selected_chapter_index(self) -> int:
@@ -423,471 +440,73 @@ class AppMainWindow(ttk.tk.Tk):
 
 
 class YoutubeChaptersPopup:
-    def __init__(self, master: tk.Tk):
-        self._video = ""
-        self._master: tk.Tk = master
-        self._video_name = tk.StringVar()
-        self._video_name_return = ""
-
-    def get_video(self, url_str) -> str:
-        url_str = url_str if url_str else ""
-        self._popup = tk.Toplevel(self._master)
-        self._popup.title("Enter Youtube video id or url")
-        self._create_video_entry_panel()
-        self._video_name.set(url_str)
-        self._popup.bind("<Return>", self._handle_enter_pressed)
-        self._popup.bind("<Escape>", self._handle_escape_pressed)
-        self._popup.bind("<Button-3>", self._handle_right_click_pressed)
-        self._popup.resizable(width=False, height=False)
-        self._popup.grid()
-        # set to be on top of the main window
-        self._popup.transient(self._master)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        self._master.wait_window(
-            self._popup
-        )  # pause anything on the main window until this one closes
-        return self._video_name_return
-
-    def _create_video_entry_panel(self):
-        self._input_panel = ttk.LabelFrame(
-            master=self._popup, text="Youtube Video", width=50
+    def __init__(self, master: tk.Tk, video_url: str = ""):
+        self._popup = EntryFieldsPopup(
+            master=master,
+            popup_title="Enter Youtube video id",
+            input_fields_parameters=[["Youtube Video", video_url]],
         )
-        self._video_name = tk.StringVar()
-        self._video_name_entry = ttk.Entry(
-            master=self._input_panel, textvariable=self._video_name
-        )
-        self._video_name_entry.grid(padx=5, pady=5)
-        self._input_panel.grid(padx=5, pady=5)
 
-        button_panel = ttk.Frame(master=self._popup)
-        ok_button = ttk.Button(
-            master=button_panel, text="OK", command=self._handle_ok_command
-        )
-        cancel_button = ttk.Button(
-            master=button_panel, text="Cancel", command=self._handle_cancel_command
-        )
-        ok_button.grid(row=0, column=1, padx=10)
-        cancel_button.grid(row=0, column=2, padx=10)
-        ok_button.focus()
-        button_panel.grid_columnconfigure(0, weight=1)
-        button_panel.grid_rowconfigure(0, weight=1)
-        button_panel.grid(padx=5, pady=5)
-
-    def _handle_cancel_command(self):
-        self._popup.destroy()
-
-    def _handle_ok_command(self):
-        self._video_name_return = self._video_name.get()
-        self._popup.destroy()
-
-    def _handle_enter_pressed(self, event):
-        self._handle_ok_command()
-
-    def _handle_escape_pressed(self, event):
-        self._handle_cancel_command()
-
-    def _handle_right_click_pressed(self, event):
-        paste_text: str = self._master.clipboard_get()
-        if paste_text:
-            self._video_name.set(paste_text)
+    def get_video(self) -> str:
+        response = self._popup.get_response()
+        return response[0] if response else None
 
 
 class PlayerConnectionPopup:
-    def __init__(self, master: tk.Tk):
-        self._master: tk.Tk = master
-        self._selected_player_name: str = None
-        self._title: str = "Connect to Player"
-
-    def select_new_player_name(self, running_player_names: List[str]) -> str | None:
-        if not running_player_names:
-            msg_popup = MessagePopup(
-                master=self._master,
-                title=self._title,
-                message_content_description="Message",
-                message_content="No MPRIS enabled media players are currently running!",
-            )
-            msg_popup.show_message()
-            return None
-        self._popup = tk.Toplevel(self._master)
-        self._popup.title(self._title)
-        self._popup.bind("<Return>", self._handle_enter_pressed)
-        self._popup.bind("<Escape>", self._handle_escape_pressed)
-        self._create_players_selection_panel(running_player_names)
-        self._popup.resizable(width=False, height=False)
-        self._popup.grid()
-        # set to be on top of the main window
-        self._popup.transient(self._master)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        # pause anything on the main window until this one closes
-        self._master.wait_window(self._popup)
-        return self._selected_player_name
-
-    def _create_players_selection_panel(self, running_player_names: List[str]):
-        players_panel = ttk.LabelFrame(master=self._popup, text="Players")
-        lb_height = 5
-        self._players_listbox = tk.Listbox(
-            master=players_panel,
-            listvariable=tk.StringVar(value=running_player_names),
-            width=20,
-            height=lb_height,
+    def __init__(self, master: tk.Tk, running_player_names: List[str] = []):
+        self._title = "Connect to Player"
+        self._popup = ListSelectionPopup(
+            master=master,
+            popup_title=self._title,
+            listbox_title="Players",
+            listbox_items=running_player_names,
         )
-        self._players_listbox.grid(column=0, row=0, sticky="NWES")
-        self._players_listbox.select_set(0)
-        sv = ttk.Scrollbar(
-            players_panel, orient=tk.VERTICAL, command=self._players_listbox.yview
-        )
-        sv.grid(column=1, row=0, sticky="NS")
-        self._players_listbox["yscrollcommand"] = sv.set
-        sh = ttk.Scrollbar(
-            players_panel, orient=tk.HORIZONTAL, command=self._players_listbox.xview
-        )
-        sh.grid(column=0, row=1, sticky="EW")
-        self._players_listbox["xscrollcommand"] = sh.set
-        players_panel.grid_columnconfigure(0, weight=1)
-        players_panel.grid_rowconfigure(0, weight=1)
-        players_panel.grid(padx=0, pady=5)
 
-        button_panel = tk.Frame(master=self._popup)
-        connect_button = ttk.Button(
-            master=button_panel, text="Connect", command=self._handle_connect_command
-        )
-        cancel_button = ttk.Button(
-            master=button_panel, text="Cancel", command=self._handle_cancel_command
-        )
-        connect_button.grid(row=0, column=1, padx=10)
-        cancel_button.grid(row=0, column=2, padx=10)
-        button_panel.grid_columnconfigure(0, weight=1)
-        button_panel.grid_rowconfigure(0, weight=1)
-        button_panel.grid(pady=10)
-        self._players_listbox.focus()
-
-    def _handle_connect_command(self):
-        self._selected_player_name = self._players_listbox.get(tk.ACTIVE)
-        self._popup.destroy()
-
-    def _handle_cancel_command(self):
-        self._selected_player = None
-        self._popup.destroy()
-
-    def _handle_ok_command(self):
-        self._popup.destroy()
-
-    def _handle_enter_pressed(self, event):
-        self._handle_connect_command()
-
-    def _handle_escape_pressed(self, event):
-        self._handle_cancel_command()
+    def select_new_player_name(self) -> str | None:
+        return self._popup.get_response()
 
 
 class ThemeSelectionPopup:
     def __init__(self, master: tk.Tk, themes: List):
-        self._master: tk.Tk = master
-        self._supported_themes: List = themes
-        self._selected_theme: str = None
+        self._popup = ListSelectionPopup(
+            master=master,
+            popup_title="Select a Theme",
+            listbox_title="Themes",
+            listbox_items=themes,
+        )
 
     def select_theme(self) -> str:
-        self._popup = tk.Toplevel(self._master)
-        self._popup.title("Select a Theme")
-        self._popup.bind("<Return>", self._handle_enter_pressed)
-        self._popup.bind("<Escape>", self._handle_escape_pressed)
-        self._create_theme_selection_panel()
-        self._popup.resizable(width=False, height=False)
-        self._popup.grid()
-        # set to be on top of the main window
-        self._popup.transient(self._master)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        self._master.wait_window(
-            self._popup
-        )  # pause anything on the main window until this one closes
-        return self._selected_theme
-
-    def _create_theme_selection_panel(self):
-        themes_panel = ttk.LabelFrame(master=self._popup, text="Themes")
-        lb_height = 5
-        self._themes_listbox = tk.Listbox(
-            master=themes_panel,
-            listvariable=tk.StringVar(value=self._supported_themes),
-            width=20,
-            height=lb_height,
-        )
-        self._themes_listbox.grid(column=0, row=0, sticky="NWES")
-        self._themes_listbox.select_set(0)
-        sv = ttk.Scrollbar(
-            themes_panel, orient=tk.VERTICAL, command=self._themes_listbox.yview
-        )
-        sv.grid(column=1, row=0, sticky="NS")
-        self._themes_listbox["yscrollcommand"] = sv.set
-        sh = ttk.Scrollbar(
-            themes_panel, orient=tk.HORIZONTAL, command=self._themes_listbox.xview
-        )
-        sh.grid(column=0, row=1, sticky="EW")
-        self._themes_listbox["xscrollcommand"] = sh.set
-        themes_panel.grid_columnconfigure(0, weight=1)
-        themes_panel.grid_rowconfigure(0, weight=1)
-        themes_panel.grid(padx=0, pady=5)
-
-        button_panel = tk.Frame(master=self._popup)
-        select_button = ttk.Button(
-            master=button_panel, text="Select", command=self._handle_selection_command
-        )
-        cancel_button = ttk.Button(
-            master=button_panel, text="Cancel", command=self._handle_cancel_command
-        )
-        select_button.grid(row=0, column=1, padx=10)
-        cancel_button.grid(row=0, column=2, padx=10)
-        button_panel.grid_columnconfigure(0, weight=1)
-        button_panel.grid_rowconfigure(0, weight=1)
-        button_panel.grid(pady=10)
-        self._themes_listbox.focus()
-
-    def _handle_selection_command(self):
-        self._selected_theme = self._themes_listbox.get(tk.ACTIVE)
-        self._popup.destroy()
-
-    def _handle_cancel_command(self):
-        self._selected_theme = None
-        self._popup.destroy()
-
-    def _handle_ok_command(self):
-        self._popup.destroy()
-
-    def _handle_enter_pressed(self, event):
-        self._handle_selection_command()
-
-    def _handle_escape_pressed(self, event):
-        self._handle_cancel_command()
+        return self._popup.get_response()
 
 
 class ChapterDetailsPopup:
-    def __init__(self, master: tk.Tk):
-        self._master: tk.Tk = master
-        self._chapter_name = tk.StringVar()
-        self._chapter_name_return = ""
-        self._chapter_timestamp = tk.StringVar()
-        self._chapter_timestamp_return = ""
-
-    def get_chapter_details(
-        self, chapter_name: str = "", chapter_timestamp: str = ""
-    ) -> tuple[str, str]:
-        self._popup = tk.Toplevel(self._master)
-        self._popup.title("Enter Chapter Details")
-        self._create_chapter_details_panel()
-        self._chapter_timestamp.set(chapter_timestamp)
-        self._chapter_name.set(chapter_name)
-        self._popup.bind("<Return>", self._handle_enter_pressed)
-        self._popup.bind("<Escape>", self._handle_escape_pressed)
-        self._popup.resizable(width=False, height=False)
-        self._popup.grid()
-        # set to be on top of the main window
-        self._popup.transient(self._master)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        self._master.wait_window(
-            self._popup
-        )  # pause anything on the main window until this one closes
-        return (self._chapter_name_return, self._chapter_timestamp_return)
-
-    def _create_chapter_details_panel(self):
-        self._chapter_name_input_panel = ttk.LabelFrame(
-            master=self._popup, text="Chapter Name", width=70
+    def __init__(
+        self, master: tk.Tk, chapter_name: str = "", chapter_timestamp: str = ""
+    ):
+        self._popup = EntryFieldsPopup(
+            master=master,
+            popup_title="Enter Chapter Details",
+            input_fields_parameters=[
+                ["Name", chapter_name],
+                ["Time Offset", chapter_timestamp],
+            ],
         )
-        self._chapter_name = tk.StringVar()
-        self._chapter_name_entry = ttk.Entry(
-            master=self._chapter_name_input_panel, textvariable=self._chapter_name
-        )
-        self._chapter_name_entry.grid(padx=5, pady=5)
-        self._chapter_name_input_panel.grid(padx=5, pady=5)
 
-        self._chapter_timestamp_input_panel = ttk.LabelFrame(
-            master=self._popup, text="Time Offset", width=50
-        )
-        self._chapter_timestamp = tk.StringVar()
-        self._chapter_timestamp_entry = ttk.Entry(
-            master=self._chapter_timestamp_input_panel,
-            textvariable=self._chapter_timestamp,
-        )
-        self._chapter_timestamp_entry.grid(padx=5, pady=5)
-        self._chapter_timestamp_input_panel.grid(padx=5, pady=5)
-
-        button_panel = ttk.Frame(master=self._popup)
-        ok_button = ttk.Button(
-            master=button_panel, text="OK", command=self._handle_ok_command
-        )
-        cancel_button = ttk.Button(
-            master=button_panel, text="Cancel", command=self._handle_cancel_command
-        )
-        ok_button.grid(row=0, column=1, padx=10)
-        cancel_button.grid(row=0, column=2, padx=10)
-        self._chapter_name_entry.focus()
-        button_panel.grid_columnconfigure(0, weight=1)
-        button_panel.grid_rowconfigure(0, weight=1)
-        button_panel.grid(padx=5, pady=5)
-
-    def _handle_cancel_command(self):
-        self._chapter_name_return = None
-        self._chapter_timestamp_return = None
-        self._popup.destroy()
-
-    def _handle_ok_command(self):
-        self._chapter_name_return = self._chapter_name.get()
-        self._chapter_timestamp_return = self._chapter_timestamp.get()
-        self._popup.destroy()
-
-    def _handle_enter_pressed(self, event):
-        self._handle_ok_command()
-
-    def _handle_escape_pressed(self, event):
-        self._handle_cancel_command()
+    def get_chapter_details(self) -> List[str]:
+        return self._popup.get_response()
 
 
 class JumpToPositionPopup:
     def __init__(self, master: tk.Tk):
-        self._master: tk.Tk = master
-        self._postion_timestamp = tk.StringVar()
-        self._postion_timestamp.set("00:00:00")
-        self._position_timestamp_return = ""
+        self._popup = EntryFieldsPopup(
+            master=master,
+            popup_title="Jump To Position",
+            input_fields_parameters=[["Time Offset", "00:00:00"]],
+        )
 
     def get_jump_to_position_timestamp(self) -> str:
-        self._popup = tk.Toplevel(self._master)
-        self._popup.title("Jump To Postion")
-        self._create_jump_to_position_panel()
-        self._popup.bind("<Return>", self._handle_enter_pressed)
-        self._popup.bind("<Escape>", self._handle_escape_pressed)
-        self._popup.resizable(width=False, height=False)
-        self._popup.grid()
-        # set to be on top of the main window
-        self._popup.transient(self._master)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        self._master.wait_window(
-            self._popup
-        )  # pause anything on the main window until this one closes
-        return self._position_timestamp_return
-
-    def _create_jump_to_position_panel(self):
-        self._chapter_timestamp_input_panel = ttk.LabelFrame(
-            master=self._popup, text="Time Offset", width=50
-        )
-        self._chapter_timestamp_entry = ttk.Entry(
-            master=self._chapter_timestamp_input_panel,
-            textvariable=self._postion_timestamp,
-        )
-        self._chapter_timestamp_entry.grid(padx=5, pady=5)
-        self._chapter_timestamp_input_panel.grid(padx=5, pady=5)
-
-        button_panel = ttk.Frame(master=self._popup)
-        ok_button = ttk.Button(
-            master=button_panel, text="OK", command=self._handle_ok_command
-        )
-        cancel_button = ttk.Button(
-            master=button_panel, text="Cancel", command=self._handle_cancel_command
-        )
-        ok_button.grid(row=0, column=1, padx=10)
-        cancel_button.grid(row=0, column=2, padx=10)
-        self._chapter_timestamp_entry.focus()
-        button_panel.grid_columnconfigure(0, weight=1)
-        button_panel.grid_rowconfigure(0, weight=1)
-        button_panel.grid(padx=5, pady=5)
-
-    def _handle_cancel_command(self):
-        self._position_timestamp_return = None
-        self._popup.destroy()
-
-    def _handle_ok_command(self):
-        self._position_timestamp_return = self._postion_timestamp.get()
-        self._popup.destroy()
-
-    def _handle_enter_pressed(self, event):
-        self._handle_ok_command()
-
-    def _handle_escape_pressed(self, event):
-        self._handle_cancel_command()
-
-
-class MessagePopup:
-    def __init__(
-        self,
-        master: tk.Tk,
-        title="Message",
-        message_content_description="Message Details",
-        message_content="",
-    ):
-        self._master: tk.Tk = master
-        self._message = tk.StringVar()
-        self._message_content_descrition = message_content_description
-        self._message_title = title
-        self._message_content = message_content
-
-    def _create_message_box(self):
-        self._popup = tk.Toplevel(self._master)
-        self._popup.title(self._message_title)
-        self._create_message_panel()
-        self._popup.bind("<Return>", self._handle_enter_pressed)
-        self._popup.bind("<Escape>", self._handle_escape_pressed)
-        self._popup.resizable(width=False, height=False)
-        self._popup.grid()
-        # set to be on top of the main window
-        self._popup.transient(self._master)
-
-    def _create_message_panel(self):
-        self._message_input_panel = ttk.LabelFrame(
-            master=self._popup, text=self._message_content_descrition, width=70
-        )
-        self._error_message_label = ttk.Label(
-            master=self._message_input_panel, textvariable=self._message
-        )
-        self._error_message_label.grid(padx=5, pady=5)
-        self._message_input_panel.grid(padx=5, pady=5)
-
-        button_panel = ttk.Frame(master=self._popup)
-        ok_button = ttk.Button(
-            master=button_panel, text="OK", command=self._handle_ok_command
-        )
-        ok_button.grid(row=0, column=1, padx=10)
-        ok_button.focus()
-        button_panel.grid_columnconfigure(0, weight=1)
-        button_panel.grid_rowconfigure(0, weight=1)
-        button_panel.grid(padx=5, pady=5)
-
-    def _handle_ok_command(self):
-        self._popup.destroy()
-
-    def _handle_enter_pressed(self, event):
-        self._handle_ok_command()
-
-    def _handle_escape_pressed(self, event):
-        self._handle_ok_command()
-
-    def show_message(self, message: str | None = None) -> None:
-        self._create_message_box()
-        if message:
-            self._message.set(message)
-        else:
-            self._message.set(self._message_content)
-        # hijack all commands from the master (clicks on the main window are ignored)
-        self._popup.grab_set()
-        self._master.wait_window(
-            self._popup
-        )  # pause anything on the main window until this one closes
-        return None
-
-
-class ErrorMessagePopup:
-    def __init__(
-        self,
-        master: tk.Tk,
-    ):
-        self._popup = MessagePopup(
-            master=master,
-            title="Error Message",
-            message_content_description="Error Details",
-        )
-
-    def show_message(self, message: str | None = None) -> None:
-        self._popup.show_message(message=message)
+        response = self._popup.get_response()
+        return response[0] if response else None
 
 
 class KeyboardShortcutsPopup:
