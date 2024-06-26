@@ -419,7 +419,10 @@ class AppMainWindow(ttk.tk.Tk):
         chapter_details_popup = ChapterDetailsPopup(
             master=self, chapter_name=chapter_name, chapter_timestamp=chapter_timestamp
         )
-        chapter_name, chapter_timestamp = chapter_details_popup.get_chapter_details()
+        chapter_detials = chapter_details_popup.get_chapter_details()
+        chapter_name, chapter_timestamp = (
+            chapter_detials if chapter_detials else (None, None)
+        )
         return chapter_name, chapter_timestamp
 
     def get_selected_chapter_index(self) -> int:
