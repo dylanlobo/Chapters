@@ -196,7 +196,7 @@ class AppMenuBar(tk.Menu):
         self._chapters_menu.add_command(
             label="Edit Title",
             command=edit_title_command,
-            underline=0,
+            underline=1,
         )
 
     def bind_insert_chapter_command(self, insert_chapter_command: callable):
