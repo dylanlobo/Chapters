@@ -154,13 +154,11 @@ class AppMenuBar(tk.Menu):
         self._main_window = main_window
         self._main_window.config(menu=self)
 
-        self._chapters_load_save_menu = tk.Menu(self, tearoff=0)
-        self.add_cascade(
-            label="Load/Save", menu=self._chapters_load_save_menu, underline=0
-        )
+        self._chapters_file_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="File", menu=self._chapters_file_menu, underline=0)
 
-        self._chapters_edit_menu = tk.Menu(self, tearoff=0)
-        self.add_cascade(label="Edit", menu=self._chapters_edit_menu, underline=0)
+        self._chapters_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="Chapters", menu=self._chapters_menu, underline=0)
 
         self._themes_menu = tk.Menu(self, tearoff=0)
         self.add_cascade(label="Theme", menu=self._themes_menu, underline=0)
@@ -187,44 +185,58 @@ class AppMenuBar(tk.Menu):
             underline=0,
         )
 
-    def bind_edit_chapter_command(self, edit_chapter_command: callable):
-        self._chapters_edit_menu.add_command(
-            label="Edit chapter",
-            command=edit_chapter_command,
+    def bind_new_title_command(self, new_title_command: callable):
+        self._chapters_menu.add_command(
+            label="New Title",
+            command=new_title_command,
+            underline=0,
+        )
+
+    def bind_edit_title_command(self, edit_title_command: callable):
+        self._chapters_menu.add_command(
+            label="Edit Title",
+            command=edit_title_command,
             underline=0,
         )
 
     def bind_insert_chapter_command(self, insert_chapter_command: callable):
-        self._chapters_edit_menu.add_command(
-            label="Insert chapter",
+        self._chapters_menu.add_command(
+            label="Insert Chapter",
             command=insert_chapter_command,
             underline=0,
         )
 
+    def bind_edit_chapter_command(self, edit_chapter_command: callable):
+        self._chapters_menu.add_command(
+            label="Edit Chapter",
+            command=edit_chapter_command,
+            underline=0,
+        )
+
     def bind_delete_chapter_command(self, delete_chapter_command: callable):
-        self._chapters_edit_menu.add_command(
-            label="Delete chapter",
+        self._chapters_menu.add_command(
+            label="Delete Chapter",
             command=delete_chapter_command,
             underline=0,
         )
 
     def bind_clear_all_command(self, clear_chapters_command: callable):
-        self._chapters_edit_menu.add_command(
+        self._chapters_menu.add_command(
             label="Clear All",
             command=clear_chapters_command,
             underline=0,
         )
 
     def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
-        self._chapters_load_save_menu.add_command(
-            label="Save chapters file ...",
+        self._chapters_file_menu.add_command(
+            label="Save Chapters File ...",
             command=save_chapters_file_command,
             underline=0,
         )
 
     def bind_load_chapters_file_command(self, load_chapters_file_command: callable):
-        self._chapters_load_save_menu.add_command(
-            label="Load chapters file ...",
+        self._chapters_file_menu.add_command(
+            label="Load Chapters File ...",
             command=load_chapters_file_command,
             underline=0,
         )
@@ -232,8 +244,8 @@ class AppMenuBar(tk.Menu):
     def bind_load_chapters_from_youtube_command(
         self, load_chapters_from_youtube_command: callable
     ):
-        self._chapters_load_save_menu.add_command(
-            label="Load chapters from Youtube ...",
+        self._chapters_file_menu.add_command(
+            label="Load Chapters From Youtube ...",
             command=load_chapters_from_youtube_command,
             underline=19,
         )
@@ -376,6 +388,12 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_clear_chapters(self, clear_chapters: callable):
         self.bind("<Control-l>", clear_chapters)
 
+    def bind_new_title(self, new_title: callable):
+        self.bind("<Control-n>", new_title)
+
+    def bind_edit_title(self, edit_title: callable):
+        self.bind("<Control-e>", edit_title)
+
     def bind_save_chapters(self, save_chapters: callable):
         self.bind("<Control-s>", save_chapters)
 
@@ -455,6 +473,10 @@ class AppMainWindow(ttk.tk.Tk):
     def get_jump_to_position_timestamp(self) -> str:
         jump_to_position_popup = JumpToPositionPopup(master=self)
         return jump_to_position_popup.get_jump_to_position_timestamp()
+
+    def request_chapter_title(self, title: str = "") -> str:
+        self._title_popup = ChapterTitlePopup(master=self, title=title)
+        return self._title_popup.get_response()
 
     def get_chapter_details(
         self, chapter_name: str = "", chapter_timestamp: str = ""
@@ -544,6 +566,19 @@ class ChapterDetailsPopup:
 
     def get_chapter_details(self) -> List[str]:
         return self._popup.get_response()
+
+
+class ChapterTitlePopup:
+    def __init__(self, master: tk.Tk, title: str = ""):
+        self._popup = EntryFieldsPopup(
+            master=master,
+            popup_title="Title",
+            input_fields_parameters=[["Title Name", title]],
+        )
+
+    def get_response(self) -> str:
+        response = self._popup.get_response()
+        return response[0] if response else None
 
 
 class JumpToPositionPopup:

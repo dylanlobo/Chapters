@@ -44,6 +44,8 @@ class GuiAppInterface(Protocol):
 
     def get_jump_to_position_timestamp(self) -> str: ...
 
+    def request_chapter_title(self, title: str = "") -> str: ...
+
     def set_chapters(self, chapters: List[str]): ...
 
     def set_chapters_file_path(self, chapters_file_path: str): ...
@@ -107,7 +109,7 @@ class GuiController:
             self.cur_player = player
         else:
             self.cur_player = PlayerProxy(None)
-        self._initialiase_chapters_content()
+        self._initialise_chapters_content()
 
     def _get_sole_running_player(self) -> Player:
         running_players = PlayerFactory.get_running_player_names()
@@ -127,7 +129,7 @@ class GuiController:
                 logger().debug("Created player")
         return player
 
-    def _initialiase_chapters_content(self):
+    def _initialise_chapters_content(self):
         self._chapters_filename: str = None
         self._chapters_yt_video: str = None
         self._chapters_title: str = None
@@ -393,5 +395,24 @@ class GuiController:
         )
 
     def handle_clear_chapters(self, event=None):
-        self._initialiase_chapters_content()
+        self._initialise_chapters_content()
         self._gui_builder.create_chapters_panel_bindings()
+
+    def handle_new_title(self, event=None):
+        title = self._view.request_chapter_title()
+        if not title:
+            return
+        self._initialise_chapters_content()
+        self._chapters_title = title
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
+        )
+
+    def handle_edit_title(self, event=None):
+        title = self._view.request_chapter_title(title=self._chapters_title)
+        if not title:
+            return
+        self._chapters_title = title
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
+        )

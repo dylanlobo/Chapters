@@ -25,11 +25,17 @@ class AppGuiBuilder:
         self._view.menu_bar.bind_jump_to_position_player_command(
             self._gui_controller.handle_jump_to_position
         )
-        self._view.menu_bar.bind_edit_chapter_command(
-            self._gui_controller.handle_edit_chapter
+        self._view.menu_bar.bind_new_title_command(
+            self._gui_controller.handle_new_title
+        )
+        self._view.menu_bar.bind_edit_title_command(
+            self._gui_controller.handle_edit_title
         )
         self._view.menu_bar.bind_insert_chapter_command(
             self._gui_controller.handle_insert_chapter
+        )
+        self._view.menu_bar.bind_edit_chapter_command(
+            self._gui_controller.handle_edit_chapter
         )
         self._view.menu_bar.bind_delete_chapter_command(
             self._gui_controller.handle_delete_chapter
@@ -135,6 +141,8 @@ class AppGuiBuilder:
         self._view.bind_edit_chapter(self._gui_controller.handle_edit_chapter)
         self._view.bind_delete_chapter(self._gui_controller.handle_delete_chapter)
         self._view.bind_jump_to_position(self._gui_controller.handle_jump_to_position)
+        self._view.bind_new_title(self._gui_controller.handle_new_title)
+        self._view.bind_edit_title(self._gui_controller.handle_edit_title)
         self._view.bind_save_chapters(
             self._gui_controller.handle_save_chapters_file_command
         )
