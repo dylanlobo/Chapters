@@ -268,8 +268,23 @@ class ErrorMessagePopup:
     ):
         self._popup = MessagePopup(
             master=master,
-            title="Error Message",
+            title="Error Message!",
             message_content_description="Error Details",
+        )
+
+    def show_message(self, message: str | None = None) -> None:
+        self._popup.show_message(message=message)
+
+
+class InfoMessagePopup:
+    def __init__(
+        self,
+        master: tk.Tk,
+    ):
+        self._popup = MessagePopup(
+            master=master,
+            title="Information",
+            message_content_description="Details",
         )
 
     def show_message(self, message: str | None = None) -> None:

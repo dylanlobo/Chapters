@@ -9,6 +9,7 @@ from chapters.ui.gui_popups import (
     ListSelectionPopup,
     MessagePopup,
     ErrorMessagePopup,
+    InfoMessagePopup,
 )
 from typing import List, Dict, TextIO
 from chapters.logger_config import logger
@@ -153,14 +154,19 @@ class AppMenuBar(tk.Menu):
         self._main_window = main_window
         self._main_window.config(menu=self)
 
-        self._connection_menu = tk.Menu(self, tearoff=0)
-        self.add_cascade(label="Player", menu=self._connection_menu, underline=0)
+        self._chapters_load_save_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(
+            label="Load/Save", menu=self._chapters_load_save_menu, underline=0
+        )
+
+        self._chapters_edit_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="Edit", menu=self._chapters_edit_menu, underline=0)
 
         self._themes_menu = tk.Menu(self, tearoff=0)
         self.add_cascade(label="Theme", menu=self._themes_menu, underline=0)
 
-        self._chapters_menu = tk.Menu(self, tearoff=0)
-        self.add_cascade(label="Load/Save", menu=self._chapters_menu, underline=0)
+        self._connection_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="Player", menu=self._connection_menu, underline=0)
 
     def bind_connect_to_player_command(self, connect_player_command: callable):
         self._connection_menu.add_command(
@@ -172,15 +178,52 @@ class AppMenuBar(tk.Menu):
             label="Disconnect", command=disconnect_player_command, underline=0
         )
 
+    def bind_jump_to_position_player_command(
+        self, jump_to_position_player_command: callable
+    ):
+        self._connection_menu.add_command(
+            label="Jump To Position",
+            command=jump_to_position_player_command,
+            underline=0,
+        )
+
+    def bind_edit_chapter_command(self, edit_chapter_command: callable):
+        self._chapters_edit_menu.add_command(
+            label="Edit chapter",
+            command=edit_chapter_command,
+            underline=0,
+        )
+
+    def bind_insert_chapter_command(self, insert_chapter_command: callable):
+        self._chapters_edit_menu.add_command(
+            label="Insert chapter",
+            command=insert_chapter_command,
+            underline=0,
+        )
+
+    def bind_delete_chapter_command(self, delete_chapter_command: callable):
+        self._chapters_edit_menu.add_command(
+            label="Delete chapter",
+            command=delete_chapter_command,
+            underline=0,
+        )
+
+    def bind_clear_all_command(self, clear_chapters_command: callable):
+        self._chapters_edit_menu.add_command(
+            label="Clear All",
+            command=clear_chapters_command,
+            underline=0,
+        )
+
     def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
-        self._chapters_menu.add_command(
+        self._chapters_load_save_menu.add_command(
             label="Save chapters file ...",
             command=save_chapters_file_command,
             underline=0,
         )
 
     def bind_load_chapters_file_command(self, load_chapters_file_command: callable):
-        self._chapters_menu.add_command(
+        self._chapters_load_save_menu.add_command(
             label="Load chapters file ...",
             command=load_chapters_file_command,
             underline=0,
@@ -189,7 +232,7 @@ class AppMenuBar(tk.Menu):
     def bind_load_chapters_from_youtube_command(
         self, load_chapters_from_youtube_command: callable
     ):
-        self._chapters_menu.add_command(
+        self._chapters_load_save_menu.add_command(
             label="Load chapters from Youtube ...",
             command=load_chapters_from_youtube_command,
             underline=19,
@@ -439,6 +482,10 @@ class AppMainWindow(ttk.tk.Tk):
 
     def show_error_message(self, message: str) -> None:
         error_message_popup = ErrorMessagePopup(master=self)
+        error_message_popup.show_message(message)
+
+    def show_info_message(self, message: str) -> None:
+        error_message_popup = InfoMessagePopup(master=self)
         error_message_popup.show_message(message)
 
 

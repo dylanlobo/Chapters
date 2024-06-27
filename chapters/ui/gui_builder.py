@@ -22,6 +22,21 @@ class AppGuiBuilder:
         self._view.menu_bar.bind_disconnect_player_command(
             self._gui_controller.handle_disconnection_command
         )
+        self._view.menu_bar.bind_jump_to_position_player_command(
+            self._gui_controller.handle_jump_to_position
+        )
+        self._view.menu_bar.bind_edit_chapter_command(
+            self._gui_controller.handle_edit_chapter
+        )
+        self._view.menu_bar.bind_insert_chapter_command(
+            self._gui_controller.handle_insert_chapter
+        )
+        self._view.menu_bar.bind_delete_chapter_command(
+            self._gui_controller.handle_delete_chapter
+        )
+        self._view.menu_bar.bind_clear_all_command(
+            self._gui_controller.handle_clear_chapters
+        )
         self._view.menu_bar.bind_load_chapters_file_command(
             self._gui_controller.handle_load_chapters_file_command
         )

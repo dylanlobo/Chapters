@@ -74,6 +74,8 @@ class GuiAppInterface(Protocol):
 
     def show_error_message(self, message: str) -> None: ...
 
+    def show_info_message(self, message: str) -> None: ...
+
     def show_display(self): ...
 
 
@@ -300,7 +302,7 @@ class GuiController:
             break
         return chapter_name, chapter_timestamp
 
-    def handle_insert_chapter(self, event):
+    def handle_insert_chapter(self, event=None):
         cur_position = 0
         try:
             cur_position = self._cur_player.position
@@ -330,7 +332,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_delete_chapter(self, event):
+    def handle_delete_chapter(self, event=None):
         selected_chapter_index = self._view.get_selected_chapter_index()
         if selected_chapter_index is None:
             return
@@ -340,9 +342,12 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_edit_chapter(self, event):
+    def handle_edit_chapter(self, event=None):
         selected_chapter_index = self._view.get_selected_chapter_index()
         if selected_chapter_index is None:
+            self._view.show_info_message(
+                "No chapter selected. Select a chapter to edit."
+            )
             return
         chapters_list = list(self._chapters.items())
         chapter_name, chapter_timestamp = chapters_list[selected_chapter_index]
@@ -362,7 +367,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_jump_to_position(self, event):
+    def handle_jump_to_position(self, event=None):
         position_timestamp = "00:00:00"
         while True:
             position_timestamp = self._view.get_jump_to_position_timestamp()
@@ -387,6 +392,6 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_clear_chapters(self, event):
+    def handle_clear_chapters(self, event=None):
         self._initialiase_chapters_content()
         self._gui_builder.create_chapters_panel_bindings()
