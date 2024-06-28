@@ -166,24 +166,7 @@ class AppMenuBar(tk.Menu):
         self._connection_menu = tk.Menu(self, tearoff=0)
         self.add_cascade(label="Player", menu=self._connection_menu, underline=0)
 
-    def bind_connect_to_player_command(self, connect_player_command: callable):
-        self._connection_menu.add_command(
-            label="Connect ...", command=connect_player_command, underline=0
-        )
-
-    def bind_disconnect_player_command(self, disconnect_player_command: callable):
-        self._connection_menu.add_command(
-            label="Disconnect", command=disconnect_player_command, underline=0
-        )
-
-    def bind_jump_to_position_player_command(
-        self, jump_to_position_player_command: callable
-    ):
-        self._connection_menu.add_command(
-            label="Jump To Position",
-            command=jump_to_position_player_command,
-            underline=0,
-        )
+    # Define menu bindings
 
     def bind_new_title_command(self, new_title_command: callable):
         self._chapters_menu.add_command(
@@ -241,6 +224,13 @@ class AppMenuBar(tk.Menu):
             underline=0,
         )
 
+    def bind_reload_chapters_file_command(self, reload_chapters_file_command: callable):
+        self._chapters_file_menu.add_command(
+            label="Reload Current File",
+            command=reload_chapters_file_command,
+            underline=0,
+        )
+
     def bind_load_chapters_from_youtube_command(
         self, load_chapters_from_youtube_command: callable
     ):
@@ -254,6 +244,32 @@ class AppMenuBar(tk.Menu):
         self._themes_menu.add_command(
             label="Select a theme ...",
             command=load_theme_selection_command,
+            underline=0,
+        )
+
+    def bind_connect_to_player_command(self, connect_player_command: callable):
+        self._connection_menu.add_command(
+            label="Connect ...", command=connect_player_command, underline=0
+        )
+
+    def bind_disconnect_player_command(self, disconnect_player_command: callable):
+        self._connection_menu.add_command(
+            label="Disconnect", command=disconnect_player_command, underline=0
+        )
+
+    def bind_jump_to_position_player_command(
+        self, jump_to_position_player_command: callable
+    ):
+        self._connection_menu.add_command(
+            label="Jump To Position",
+            command=jump_to_position_player_command,
+            underline=0,
+        )
+
+    def bind_raise_player_window_command(self, raise_player_window_command: callable):
+        self._connection_menu.add_command(
+            label="Raise Player Window",
+            command=raise_player_window_command,
             underline=0,
         )
 
@@ -366,14 +382,15 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_player_controls_commands(self, player_controls_funcs: Dict[str, callable]):
         self._player_control_panel.bind_player_controls_commands(player_controls_funcs)
 
-    def bind_connect_to_player_command(self, connect_player_command: callable):
-        self._menu_bar.bind_connect_to_player_command(connect_player_command)
-
-    def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
-        self._menu_bar.bind_save_chapters_file_command(save_chapters_file_command)
+    # Menu bar bindings
 
     def bind_load_chapters_file_command(self, load_chapters_file_command: callable):
         self._menu_bar.bind_load_chapters_file_command(load_chapters_file_command)
+        self.bind("<Control-f>", load_chapters_file_command)
+
+    def bind_reload_chapters_file_command(self, reload_chapters_file_command: callable):
+        self._menu_bar.bind_reload_chapters_file_command(reload_chapters_file_command)
+        self.bind("<F5>", reload_chapters_file_command)
 
     def bind_load_chapters_from_youtube_command(
         self, load_chapters_from_youtube_command: callable
@@ -381,39 +398,55 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_load_chapters_from_youtube_command(
             load_chapters_from_youtube_command
         )
+        self.bind("<Control-y>", load_chapters_from_youtube_command)
 
-    def bind_reload_chapters(self, reload_chapters: callable):
-        self.bind("<F5>", reload_chapters)
+    def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
+        self._menu_bar.bind_save_chapters_file_command(save_chapters_file_command)
+        self.bind("<Control-s>", save_chapters_file_command)
 
-    def bind_clear_chapters(self, clear_chapters: callable):
+    def bind_new_title_command(self, new_title_command: callable):
+        self._menu_bar.bind_new_title_command(new_title_command)
+        self.bind("<Control-n>", new_title_command)
+
+    def bind_edit_title_command(self, edit_title_command: callable):
+        self._menu_bar.bind_edit_title_command(edit_title_command)
+        self.bind("<Control-e>", edit_title_command)
+
+    def bind_insert_chapter_command(self, insert_chapter_command: callable):
+        self._menu_bar.bind_insert_chapter_command(insert_chapter_command)
+        self.bind("<Control-i>", insert_chapter_command)
+
+    def bind_edit_chapter_command(self, edit_chapter_command: callable):
+        self._menu_bar.bind_edit_chapter_command(edit_chapter_command)
+        self.bind("<F2>", edit_chapter_command)
+
+    def bind_delete_chapter_command(self, delete_chapter_command: callable):
+        self._menu_bar.bind_delete_chapter_command(delete_chapter_command)
+        self.bind("<Delete>", delete_chapter_command)
+
+    def bind_clear_all_command(self, clear_chapters: callable):
+        self._menu_bar.bind_clear_all_command(clear_chapters)
         self.bind("<Control-l>", clear_chapters)
 
-    def bind_new_title(self, new_title: callable):
-        self.bind("<Control-n>", new_title)
+    def bind_connect_to_player_command(self, connect_player_command: callable):
+        self._menu_bar.bind_connect_to_player_command(connect_player_command)
+        self.bind("<c>", connect_player_command)
 
-    def bind_edit_title(self, edit_title: callable):
-        self.bind("<Control-e>", edit_title)
+    def bind_disconnect_player_command(self, disconnect_player_command: callable):
+        self._menu_bar.bind_disconnect_player_command(disconnect_player_command)
+        self.bind("<d>", disconnect_player_command)
 
-    def bind_save_chapters(self, save_chapters: callable):
-        self.bind("<Control-s>", save_chapters)
+    def bind_jump_to_position_player_command(
+        self, jump_to_position_player_command: callable
+    ):
+        self._menu_bar.bind_jump_to_position_player_command(
+            jump_to_position_player_command
+        )
+        self.bind("<Control-j>", jump_to_position_player_command)
 
-    def bind_insert_chapter(self, insert_chapter: callable):
-        self.bind("<Control-i>", insert_chapter)
-
-    def bind_edit_chapter(self, edit_chapter: callable):
-        self.bind("<F2>", edit_chapter)
-
-    def bind_delete_chapter(self, delete_chapter: callable):
-        self.bind("<Delete>", delete_chapter)
-
-    def bind_jump_to_position(self, jump_to_position: callable):
-        self.bind("<Control-j>", jump_to_position)
-
-    def bind_select_player_shortcut(self, select_player: callable):
-        self.bind("<s>", select_player)
-
-    def bind_raise_player_window(self, raise_player_window: callable):
-        self.bind("<f>", raise_player_window)
+    def bind_raise_player_window_command(self, raise_player_window_command: callable):
+        self._menu_bar.bind_raise_player_window_command(raise_player_window_command)
+        self.bind("<f>", raise_player_window_command)
 
     def request_save_chapters_file(
         self, default_filename: str = "chapters.ch"

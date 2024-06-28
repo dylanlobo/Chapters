@@ -16,42 +16,43 @@ class AppGuiBuilder:
 
     def create_menu_bar_bindings(self) -> None:
         logger().debug("Creating menu bar")
-        self._view.menu_bar.bind_connect_to_player_command(
-            self._gui_controller.handle_connection_command
-        )
-        self._view.menu_bar.bind_disconnect_player_command(
-            self._gui_controller.handle_disconnection_command
-        )
-        self._view.menu_bar.bind_jump_to_position_player_command(
-            self._gui_controller.handle_jump_to_position
-        )
-        self._view.menu_bar.bind_new_title_command(
-            self._gui_controller.handle_new_title
-        )
-        self._view.menu_bar.bind_edit_title_command(
-            self._gui_controller.handle_edit_title
-        )
-        self._view.menu_bar.bind_insert_chapter_command(
-            self._gui_controller.handle_insert_chapter
-        )
-        self._view.menu_bar.bind_edit_chapter_command(
-            self._gui_controller.handle_edit_chapter
-        )
-        self._view.menu_bar.bind_delete_chapter_command(
-            self._gui_controller.handle_delete_chapter
-        )
-        self._view.menu_bar.bind_clear_all_command(
-            self._gui_controller.handle_clear_chapters
-        )
-        self._view.menu_bar.bind_load_chapters_file_command(
+        self._view.bind_load_chapters_file_command(
             self._gui_controller.handle_load_chapters_file_command
         )
-        self._view.menu_bar.bind_load_chapters_from_youtube_command(
+        self._view.bind_load_chapters_from_youtube_command(
             self._gui_controller.handle_load_chapters_from_youtube
         )
 
-        self._view.menu_bar.bind_save_chapters_file_command(
+        self._view.bind_reload_chapters_file_command(
+            self._gui_controller.handle_reload_chapters
+        )
+
+        self._view.bind_save_chapters_file_command(
             self._gui_controller.handle_save_chapters_file_command
+        )
+        self._view.bind_new_title_command(self._gui_controller.handle_new_title)
+        self._view.bind_edit_title_command(self._gui_controller.handle_edit_title)
+        self._view.bind_insert_chapter_command(
+            self._gui_controller.handle_insert_chapter
+        )
+        self._view.bind_edit_chapter_command(self._gui_controller.handle_edit_chapter)
+        self._view.bind_delete_chapter_command(
+            self._gui_controller.handle_delete_chapter
+        )
+        self._view.bind_clear_all_command(self._gui_controller.handle_clear_chapters)
+
+        self._view.bind_connect_to_player_command(
+            self._gui_controller.handle_connection_command
+        )
+        self._view.bind_disconnect_player_command(
+            self._gui_controller.handle_disconnection_command
+        )
+        self._view.bind_jump_to_position_player_command(
+            self._gui_controller.handle_jump_to_position
+        )
+
+        self._view.bind_raise_player_window_command(
+            self._gui_controller.handle_raise_player_window_command
         )
 
     def create_chapters_panel_bindings(
@@ -132,21 +133,6 @@ class AppGuiBuilder:
 
     def create_app_window_bindings(self) -> None:
         logger().debug("Creating Application Window bindings")
-        self._view.bind_reload_chapters(self._gui_controller.handle_reload_chapters)
-        self._view.bind_clear_chapters(self._gui_controller.handle_clear_chapters)
-        self._view.bind_select_player_shortcut(
-            self._gui_controller.handle_connection_command
-        )
-        self._view.bind_insert_chapter(self._gui_controller.handle_insert_chapter)
-        self._view.bind_edit_chapter(self._gui_controller.handle_edit_chapter)
-        self._view.bind_delete_chapter(self._gui_controller.handle_delete_chapter)
-        self._view.bind_jump_to_position(self._gui_controller.handle_jump_to_position)
-        self._view.bind_new_title(self._gui_controller.handle_new_title)
-        self._view.bind_edit_title(self._gui_controller.handle_edit_title)
-        self._view.bind_save_chapters(
-            self._gui_controller.handle_save_chapters_file_command
-        )
-        self._view.bind_raise_player_window(self._gui_controller.raise_player_window)
 
     def build(self) -> AppMainWindow:
         self.create_menu_bar_bindings()

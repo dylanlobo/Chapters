@@ -193,7 +193,7 @@ class GuiController:
     def raise_player_window(self):
         self._cur_player.raise_window()
 
-    def handle_disconnection_command(self):
+    def handle_disconnection_command(self, event=None):
         self._cur_player = PlayerProxy(None)
         self._view.set_player_instance_name(None)
 
@@ -210,6 +210,9 @@ class GuiController:
                 self._view.set_player_instance_name(new_player_name)
             except PlayerCreationError as e:
                 logger().error(e)
+
+    def handle_raise_player_window_command(self, event=None):
+        self.raise_player_window()
 
     def load_chapters_file(
         self, chapters_file: str | TextIO
@@ -238,7 +241,7 @@ class GuiController:
         self._chapters_filename = chapters_file.name
         helpers.save_chapters_file(chapters_file, self._chapters_title, self._chapters)
 
-    def handle_load_chapters_file_command(self):
+    def handle_load_chapters_file_command(self, event=None):
         chapters_file = self._view.request_chapters_file()
         if not chapters_file:
             return
@@ -248,7 +251,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_load_chapters_from_youtube(self):
+    def handle_load_chapters_from_youtube(self, event=None):
         url_str = helpers.get_url_from_clipboard()
         video_name = self._view.get_youtube_video(url_str)
         if not video_name:
@@ -387,7 +390,7 @@ class GuiController:
             self.set_player_position(position_timestamp)
             break
 
-    def handle_reload_chapters(self, event):
+    def handle_reload_chapters(self, event=None):
         if self._chapters_filename:
             self.load_chapters_file(self._chapters_filename)
         self._gui_builder.create_chapters_panel_bindings(
