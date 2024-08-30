@@ -150,15 +150,6 @@ class GuiController:
     def set_chapters_yt_video(self, video: str):
         self._chapters_yt_video = video
 
-    def _load_chapters_from_youtube(self):
-        try:
-            self._chapters_title, self._chapters = helpers.load_chapters_from_youtube(
-                video=self._chapters_yt_video
-            )
-        except Exception as e:
-            logger().error(e)
-            raise e
-
     def chapters_listbox_selection_handler(self, event):
         selection = event.widget.curselection()
         if selection:
@@ -251,9 +242,10 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_load_chapters_from_youtube(self, event=None):
-        url_str = helpers.get_url_from_clipboard()
-        video_name = self._view.get_youtube_video(url_str)
+    def _load_chapters_from_youtube(self, gui_prompt: bool):
+        video_name = helpers.get_url_from_clipboard()
+        if gui_prompt:
+            video_name = self._view.get_youtube_video(video_name)
         if not video_name:
             return
         video_name = video_name.strip()
@@ -276,6 +268,12 @@ class GuiController:
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+
+    def handle_load_chapters_from_youtube(self, event=None):
+        self._load_chapters_from_youtube(gui_prompt=True)
+
+    def handle_load_chapters_from_youtube_no_prompt(self, event=None):
+        self._load_chapters_from_youtube(gui_prompt=False)
 
     def _update_chapter_details(
         self, suggested_chapter_name: str, suggestd_chapter_timestamp: str

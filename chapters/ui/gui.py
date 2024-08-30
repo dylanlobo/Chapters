@@ -400,6 +400,11 @@ class AppMainWindow(ttk.tk.Tk):
         )
         self.bind("<Control-y>", load_chapters_from_youtube_command)
 
+    def bind_load_chapters_from_youtube_no_prompt_command(
+        self, load_chapters_from_youtube_no_prompt_command: callable
+    ):
+        self.bind("<Control-Shift-Y>", load_chapters_from_youtube_no_prompt_command)
+
     def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
         self._menu_bar.bind_save_chapters_file_command(save_chapters_file_command)
         self.bind("<Control-s>", save_chapters_file_command)
