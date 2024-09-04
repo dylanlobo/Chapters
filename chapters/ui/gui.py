@@ -10,6 +10,7 @@ from chapters.ui.gui_popups import (
     MessagePopup,
     ErrorMessagePopup,
     InfoMessagePopup,
+    HelpPopup,
 )
 from typing import List, Dict, TextIO
 from chapters.logger_config import logger
@@ -157,14 +158,17 @@ class AppMenuBar(tk.Menu):
         self._chapters_file_menu = tk.Menu(self, tearoff=0)
         self.add_cascade(label="File", menu=self._chapters_file_menu, underline=0)
 
+        self._connection_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="Player", menu=self._connection_menu, underline=0)
+
         self._chapters_menu = tk.Menu(self, tearoff=0)
         self.add_cascade(label="Chapters", menu=self._chapters_menu, underline=0)
 
         self._themes_menu = tk.Menu(self, tearoff=0)
         self.add_cascade(label="Theme", menu=self._themes_menu, underline=0)
 
-        self._connection_menu = tk.Menu(self, tearoff=0)
-        self.add_cascade(label="Player", menu=self._connection_menu, underline=0)
+        self._help_menu = tk.Menu(self, tearoff=0)
+        self.add_cascade(label="Help", menu=self._help_menu, underline=0)
 
     # Define menu bindings
 
@@ -238,6 +242,15 @@ class AppMenuBar(tk.Menu):
             label="Load Chapters From Youtube ...",
             command=load_chapters_from_youtube_command,
             underline=19,
+        )
+
+    def bind_show_keyboard_shortcuts_help_command(
+        self, show_keyboard_shortcuts_help_command: callable
+    ):
+        self._help_menu.add_command(
+            label="Keyboard Shortcuts",
+            command=show_keyboard_shortcuts_help_command,
+            underline=0,
         )
 
     def bind_theme_selection_command(self, load_theme_selection_command: callable):
@@ -453,6 +466,13 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_raise_player_window_command(raise_player_window_command)
         self.bind("<f>", raise_player_window_command)
 
+    def bind_show_keyboard_shortcuts_help_command(
+        self, show_keyboard_shortcuts_help_command: callable
+    ):
+        self._menu_bar.bind_show_keyboard_shortcuts_help_command(
+            show_keyboard_shortcuts_help_command
+        )
+
     def request_save_chapters_file(
         self, default_filename: str = "chapters.ch"
     ) -> TextIO:
@@ -547,6 +567,10 @@ class AppMainWindow(ttk.tk.Tk):
     def show_info_message(self, message: str) -> None:
         error_message_popup = InfoMessagePopup(master=self)
         error_message_popup.show_message(message)
+
+    def show_help(self, content: str) -> None:
+        help_popup = HelpPopup(master=self, help_content=content)
+        help_popup.show_help()
 
 
 class YoutubeChaptersPopup:

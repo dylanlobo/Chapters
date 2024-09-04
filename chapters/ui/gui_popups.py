@@ -2,6 +2,8 @@
 
 import tkinter as tk
 import ttkbootstrap as ttk
+from ttkbootstrap.scrolled import ScrolledFrame
+from tkhtmlview import HTMLLabel
 from typing import List, Dict
 
 
@@ -185,6 +187,74 @@ class ListSelectionPopup:
     def _handle_select_command(self, event=None):
         self._selected_item = self._listbox.get(tk.ACTIVE)
         self._popup.destroy()
+
+
+class HelpPopup:
+    """
+    The HelpPopup class represents a popup window for displaying application help .
+    """
+
+    def __init__(
+        self,
+        master: tk.Tk,
+        title="Help",
+        help_content="",
+    ):
+        self._master: tk.Tk = master
+        self._content = tk.StringVar()
+        self._help_title = title
+        self._help_content = help_content
+
+    def _create_message_box(self):
+        self._popup = tk.Toplevel(self._master)
+        self._popup.geometry("500x400")
+        self._popup.grid_rowconfigure(0, weight=19)
+        self._popup.grid_rowconfigure(1, weight=1)
+        self._popup.grid_columnconfigure(0, weight=1)
+        self._popup.title(self._help_title)
+        self._create_message_panel()
+        self._popup.bind("<Return>", self._handle_enter_pressed)
+        self._popup.bind("<Escape>", self._handle_escape_pressed)
+        self._popup.resizable(width=False, height=False)
+        # set to be on top of the main window
+        self._popup.transient(self._master)
+
+    def _create_message_panel(self):
+        self._help_input_panel = ScrolledFrame(master=self._popup, autohide=False)
+        self._help_input_panel.grid(row=0, column=0, sticky="NWES")
+        self._help_input_panel.grid_rowconfigure(0, weight=1)
+        self._help_input_panel.grid_columnconfigure(0, weight=1)
+        self._help_message_label = HTMLLabel(
+            master=self._help_input_panel, html=self._help_content
+        )
+        self._help_message_label.grid(row=0, column=0, sticky="NWES")
+        self._help_message_label.fit_height()
+
+        button_panel = ttk.Frame(master=self._popup)
+        button_panel.grid(row=1, column=0, sticky="NWES", pady=10)
+        ok_button = ttk.Button(
+            master=button_panel, text="OK", command=self._handle_ok_command
+        )
+        ok_button.pack()
+        ok_button.focus()
+
+    def _handle_ok_command(self):
+        self._popup.destroy()
+
+    def _handle_enter_pressed(self, event):
+        self._handle_ok_command()
+
+    def _handle_escape_pressed(self, event):
+        self._handle_ok_command()
+
+    def show_help(self) -> None:
+        self._create_message_box()
+        # hijack all commands from the master (clicks on the main window are ignored)
+        self._popup.grab_set()
+        self._master.wait_window(
+            self._popup
+        )  # pause anything on the main window until this one closes
+        return None
 
 
 class MessagePopup:
