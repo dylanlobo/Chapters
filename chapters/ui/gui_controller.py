@@ -83,6 +83,8 @@ class GuiAppInterface(Protocol):
 
     def show_display(self): ...
 
+    def exit_application(self): ...
+
 
 def handle_player_error(func: callable):
     def decorator(self, *args, **kwargs):
@@ -423,3 +425,6 @@ class GuiController:
 
     def handle_show_keyboard_shortcuts_help(self, event=None):
         self._view.show_help(content=keyboard_shortcuts_help)
+
+    def handle_exit_application_command(self, event=None):
+        self._view.exit_application()

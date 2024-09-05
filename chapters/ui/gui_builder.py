@@ -34,6 +34,9 @@ class AppGuiBuilder:
         self._view.bind_save_chapters_file_command(
             self._gui_controller.handle_save_chapters_file_command
         )
+        self._view.bind_exit_application_command(
+            self._gui_controller.handle_exit_application_command
+        )
         self._view.bind_new_title_command(self._gui_controller.handle_new_title)
         self._view.bind_edit_title_command(self._gui_controller.handle_edit_title)
         self._view.bind_insert_chapter_command(

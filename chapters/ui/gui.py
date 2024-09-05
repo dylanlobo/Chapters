@@ -244,6 +244,13 @@ class AppMenuBar(tk.Menu):
             underline=19,
         )
 
+    def bind_exit_application_command(self, exit_application_command: callable):
+        self._chapters_file_menu.add_command(
+            label="Exit",
+            command=exit_application_command,
+            underline=1,
+        )
+
     def bind_show_keyboard_shortcuts_help_command(
         self, show_keyboard_shortcuts_help_command: callable
     ):
@@ -350,6 +357,9 @@ class AppMainWindow(ttk.tk.Tk):
         self._player_control_panel = player_control_panel
 
     def _handle_escape_pressed(self, event):
+        self.exit_application()
+
+    def exit_application(self):
         logger().debug("Destroying Main Window")
         self.destroy()
 
@@ -472,6 +482,9 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_show_keyboard_shortcuts_help_command(
             show_keyboard_shortcuts_help_command
         )
+
+    def bind_exit_application_command(self, exit_application_command: callable):
+        self._menu_bar.bind_exit_application_command(exit_application_command)
 
     def request_save_chapters_file(
         self, default_filename: str = "chapters.ch"
@@ -654,23 +667,3 @@ class JumpToPositionPopup:
     def get_jump_to_position_timestamp(self) -> str:
         response = self._popup.get_response()
         return response[0] if response else None
-
-
-class KeyboardShortcutsPopup:
-    def __init__(
-        self,
-        master: tk.Tk,
-    ):
-        self._popup = MessagePopup(
-            master=master,
-            title="Help",
-            message_content_description="Keyboard Shortcuts",
-            message_content=self._shortcuts,
-        )
-        self._define_shortcuts()
-
-    def _define_shortcuts(self):
-        self._shortcuts = "<Control-l> : Clear Chapters"
-
-    def show_message(self, message: str | None = None) -> None:
-        self._popup.show_message(message=self._shortcuts)
