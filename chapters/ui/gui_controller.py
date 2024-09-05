@@ -274,10 +274,10 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_load_chapters_from_youtube(self, event=None):
+    def handle_load_chapters_from_youtube_command(self, event=None):
         self._load_chapters_from_youtube(gui_prompt=True)
 
-    def handle_load_chapters_from_youtube_no_prompt(self, event=None):
+    def handle_load_chapters_from_youtube_no_prompt_command(self, event=None):
         self._load_chapters_from_youtube(gui_prompt=False)
 
     def _update_chapter_details(
@@ -310,7 +310,7 @@ class GuiController:
             break
         return chapter_name, chapter_timestamp
 
-    def handle_insert_chapter(self, event=None):
+    def handle_insert_chapter_command(self, event=None):
         cur_position = 0
         try:
             cur_position = self._cur_player.position
@@ -340,7 +340,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_delete_chapter(self, event=None):
+    def handle_delete_chapter_command(self, event=None):
         selected_chapter_index = self._view.get_selected_chapter_index()
         if selected_chapter_index is None:
             return
@@ -350,7 +350,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_edit_chapter(self, event=None):
+    def handle_edit_chapter_command(self, event=None):
         selected_chapter_index = self._view.get_selected_chapter_index()
         if selected_chapter_index is None:
             self._view.show_info_message(
@@ -375,7 +375,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_jump_to_position(self, event=None):
+    def handle_jump_to_position_command(self, event=None):
         position_timestamp = "00:00:00"
         while True:
             position_timestamp = self._view.get_jump_to_position_timestamp()
@@ -393,18 +393,18 @@ class GuiController:
             self.set_player_position(position_timestamp)
             break
 
-    def handle_reload_chapters(self, event=None):
+    def handle_reload_chapters_command(self, event=None):
         if self._chapters_filename:
             self.load_chapters_file(self._chapters_filename)
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
 
-    def handle_clear_chapters(self, event=None):
+    def handle_clear_chapters_command(self, event=None):
         self._initialise_chapters_content()
         self._gui_builder.create_chapters_panel_bindings()
 
-    def handle_new_title(self, event=None):
+    def handle_new_title_command(self, event=None):
         title = self._view.request_chapter_title()
         if not title:
             return
@@ -414,7 +414,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_edit_title(self, event=None):
+    def handle_edit_title_command(self, event=None):
         title = self._view.request_chapter_title(title=self._chapters_title)
         if not title:
             return
@@ -423,7 +423,7 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
-    def handle_show_keyboard_shortcuts_help(self, event=None):
+    def handle_show_keyboard_shortcuts_help_command(self, event=None):
         self._view.show_help(content=keyboard_shortcuts_help)
 
     def handle_exit_application_command(self, event=None):

@@ -20,15 +20,15 @@ class AppGuiBuilder:
             self._gui_controller.handle_load_chapters_file_command
         )
         self._view.bind_load_chapters_from_youtube_command(
-            self._gui_controller.handle_load_chapters_from_youtube
+            self._gui_controller.handle_load_chapters_from_youtube_command
         )
 
         self._view.bind_load_chapters_from_youtube_no_prompt_command(
-            self._gui_controller.handle_load_chapters_from_youtube_no_prompt
+            self._gui_controller.handle_load_chapters_from_youtube_no_prompt_command
         )
 
         self._view.bind_reload_chapters_file_command(
-            self._gui_controller.handle_reload_chapters
+            self._gui_controller.handle_reload_chapters_command
         )
 
         self._view.bind_save_chapters_file_command(
@@ -37,16 +37,22 @@ class AppGuiBuilder:
         self._view.bind_exit_application_command(
             self._gui_controller.handle_exit_application_command
         )
-        self._view.bind_new_title_command(self._gui_controller.handle_new_title)
-        self._view.bind_edit_title_command(self._gui_controller.handle_edit_title)
+        self._view.bind_new_title_command(self._gui_controller.handle_new_title_command)
+        self._view.bind_edit_title_command(
+            self._gui_controller.handle_edit_title_command
+        )
         self._view.bind_insert_chapter_command(
-            self._gui_controller.handle_insert_chapter
+            self._gui_controller.handle_insert_chapter_command
         )
-        self._view.bind_edit_chapter_command(self._gui_controller.handle_edit_chapter)
+        self._view.bind_edit_chapter_command(
+            self._gui_controller.handle_edit_chapter_command
+        )
         self._view.bind_delete_chapter_command(
-            self._gui_controller.handle_delete_chapter
+            self._gui_controller.handle_delete_chapter_command
         )
-        self._view.bind_clear_all_command(self._gui_controller.handle_clear_chapters)
+        self._view.bind_clear_all_command(
+            self._gui_controller.handle_clear_chapters_command
+        )
 
         self._view.bind_connect_to_player_command(
             self._gui_controller.handle_connection_command
@@ -55,7 +61,7 @@ class AppGuiBuilder:
             self._gui_controller.handle_disconnection_command
         )
         self._view.bind_jump_to_position_player_command(
-            self._gui_controller.handle_jump_to_position
+            self._gui_controller.handle_jump_to_position_command
         )
 
         self._view.bind_raise_player_window_command(
@@ -63,7 +69,7 @@ class AppGuiBuilder:
         )
 
         self._view.bind_show_keyboard_shortcuts_help_command(
-            self._gui_controller.handle_show_keyboard_shortcuts_help
+            self._gui_controller.handle_show_keyboard_shortcuts_help_command
         )
 
     def create_chapters_panel_bindings(
