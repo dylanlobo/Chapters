@@ -1,0 +1,99 @@
+<html lang="en">
+
+<head>
+    <h4>Overview</h4>
+</head>
+
+<body>
+    <table>
+      <p style="font-size: 10px;">
+      <tr>
+        <td><b><i>File Operations</i></b></td>
+      </tr>
+      <tr>
+        <td> - Load, Save and Reload </td>
+      </tr>
+      <tr>
+        <td><b><i>YouTube Operations</i></b></td>
+      </tr>
+      <tr>
+        <td>- Load chapters directly from a YouTube URL (or video identifier)</td>
+      </tr>
+      <tr>
+        <td><b><i>Player Control Operations</i></b></td>
+      </tr>
+      <tr> 
+        <td>- Connect/Disconnect from a running (MPRIS enabled) audio/video media player.</td>
+      </tr>
+      <tr> 
+        <td> - Play/Pause </td>
+      </tr>
+      <tr> 
+        <td>- Skip forwards or backwards by 5 seconds, 10 seconds or 1 minute</td>
+      </tr>
+      <tr>
+        <td> - Jump directly to specified time offset.</td>
+      </tr>
+      <tr>
+        <td> - Raise the the connected player's window.</td>
+      </tr>
+      <tr>
+        <td><b><i>Chaptering Operations</i></b></td>
+      </tr>
+      <tr>
+        <td> - Jump to a selected chapter</td>
+      </tr>
+      <tr>
+        <td> - Create/Edit the title of a video/audio playback.</td>
+      </tr>
+      <tr>
+        <td> - Create/Insert/Edit a chapter title with corresponding time offset</td>
+      </tr>
+      <tr>
+        <td> - Delete a selected chapter.</td>
+      </tr>
+      <tr>
+        <td><b><i>Theme Selection:</i></b></td>
+      </tr>
+      <tr>
+        <td> Changed the GUI theme/appearance by selecting from a list of supported GUI themes.</td>
+      </tr>
+      <tr>
+        <td><b><i>Keyboard Shortcuts:</i></b></td>
+      </tr>
+      <tr>
+        <td> Supports several keyboard shortcuts for the above mentioned operations.</td>
+      </tr>
+      <tr>
+        <td> See the help section on keyboard shortcuts for details.</td>
+      </tr>
+      <tr>
+        <td><b><i>Note:</i></b></td>
+      </tr>
+      <tr>
+        <td> Chaptering information can be stored and loaded from JSON files with a .ch extension. The general structure of a Chapters file is:
+        </td>
+      </tr>
+      <tr>
+        <td>
+  {
+    "title":"my title",
+    "chapters":{
+    "Introduction":"00:00:00",
+    "Chapter 1":"00:01:00"
+    }
+  }
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          "title" is the title of the audio/video file. "chapters" is a map collection of chapter titles and their corresponding time offsets
+  in HH:MM:SS format.
+        </td>
+      </tr>
+    </p>
+  </table>
+
+</body>
+
+</html>
