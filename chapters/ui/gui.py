@@ -260,6 +260,20 @@ class AppMenuBar(tk.Menu):
             underline=0,
         )
 
+    def bind_show_overview_help_command(self, show_overview_help_command: callable):
+        self._help_menu.add_command(
+            label="Overview",
+            command=show_overview_help_command,
+            underline=0,
+        )
+
+    def bind_show_about_help_command(self, show_about_help_command: callable):
+        self._help_menu.add_command(
+            label="About",
+            command=show_about_help_command,
+            underline=0,
+        )
+
     def bind_theme_selection_command(self, load_theme_selection_command: callable):
         self._themes_menu.add_command(
             label="Select a theme ...",
@@ -483,6 +497,12 @@ class AppMainWindow(ttk.tk.Tk):
             show_keyboard_shortcuts_help_command
         )
 
+    def bind_show_overview_help_command(self, show_overview_help_command: callable):
+        self._menu_bar.bind_show_overview_help_command(show_overview_help_command)
+
+    def bind_show_about_help_command(self, show_about_help_command: callable):
+        self._menu_bar.bind_show_about_help_command(show_about_help_command)
+
     def bind_exit_application_command(self, exit_application_command: callable):
         self._menu_bar.bind_exit_application_command(exit_application_command)
 
@@ -581,8 +601,10 @@ class AppMainWindow(ttk.tk.Tk):
         error_message_popup = InfoMessagePopup(master=self)
         error_message_popup.show_message(message)
 
-    def show_help(self, content: str) -> None:
-        help_popup = HelpPopup(master=self, help_content=content)
+    def show_help(self, content: str, view_dimensions: str) -> None:
+        help_popup = HelpPopup(
+            master=self, help_content=content, help_view_dimensions=view_dimensions
+        )
         help_popup.show_help()
 
 

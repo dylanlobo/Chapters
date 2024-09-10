@@ -1,4 +1,5 @@
-keyboard_shortcuts_help = """
+keyboard_shortcuts_help_view_dimensions: str = "500x400"
+keyboard_shortcuts_help: str = """
 <html lang="en">
 <head>
 		<h4>Keyboard Shortcuts</h4>

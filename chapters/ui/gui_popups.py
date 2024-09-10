@@ -197,17 +197,19 @@ class HelpPopup:
     def __init__(
         self,
         master: tk.Tk,
-        title="Help",
-        help_content="",
+        title: str = "Help",
+        help_content: str = "",
+        help_view_dimensions: str = "500x400",
     ):
         self._master: tk.Tk = master
         self._content = tk.StringVar()
-        self._help_title = title
-        self._help_content = help_content
+        self._help_title: str = title
+        self._help_content: str = help_content
+        self._help_view_dimensions: str = help_view_dimensions
 
     def _create_message_box(self):
         self._popup = tk.Toplevel(self._master)
-        self._popup.geometry("500x400")
+        self._popup.geometry(self._help_view_dimensions)
         self._popup.grid_rowconfigure(0, weight=19)
         self._popup.grid_rowconfigure(1, weight=1)
         self._popup.grid_columnconfigure(0, weight=1)
@@ -228,7 +230,7 @@ class HelpPopup:
             master=self._help_input_panel, html=self._help_content
         )
         self._help_message_label.grid(row=0, column=0, sticky="NWES")
-        self._help_message_label.fit_height()
+        # self._help_message_label.fit_height()
 
         button_panel = ttk.Frame(master=self._popup)
         button_panel.grid(row=1, column=0, sticky="NWES", pady=10)

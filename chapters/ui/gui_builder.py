@@ -68,8 +68,16 @@ class AppGuiBuilder:
             self._gui_controller.handle_raise_player_window_command
         )
 
+        self._view.bind_show_overview_help_command(
+            self._gui_controller.handle_show_overview_help_command
+        )
+
         self._view.bind_show_keyboard_shortcuts_help_command(
             self._gui_controller.handle_show_keyboard_shortcuts_help_command
+        )
+
+        self._view.bind_show_about_help_command(
+            self._gui_controller.handle_show_about_help_command
         )
 
     def create_chapters_panel_bindings(

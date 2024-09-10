@@ -3,7 +3,14 @@ from chapters import helpers
 from chapters.mpris_player import Player
 from chapters.mpris_player import PlayerFactory, PlayerCreationError
 from chapters.mpris_player import PlayerProxy
-from chapters.chapters_help import keyboard_shortcuts_help
+from chapters.chapters_help import (
+    keyboard_shortcuts_help,
+    overview_help,
+    about_help,
+    keyboard_shortcuts_help_view_dimensions,
+    overview_help_view_dimensions,
+    about_help_view_dimensions,
+)
 from chapters.logger_config import logger
 
 
@@ -79,7 +86,7 @@ class GuiAppInterface(Protocol):
 
     def show_info_message(self, message: str) -> None: ...
 
-    def show_help(self, content: str) -> None: ...
+    def show_help(self, content: str, view_dimensions: str) -> None: ...
 
     def show_display(self): ...
 
@@ -424,7 +431,20 @@ class GuiController:
         )
 
     def handle_show_keyboard_shortcuts_help_command(self, event=None):
-        self._view.show_help(content=keyboard_shortcuts_help)
+        self._view.show_help(
+            content=keyboard_shortcuts_help,
+            view_dimensions=keyboard_shortcuts_help_view_dimensions,
+        )
+
+    def handle_show_overview_help_command(self, event=None):
+        self._view.show_help(
+            content=overview_help, view_dimensions=overview_help_view_dimensions
+        )
+
+    def handle_show_about_help_command(self, event=None):
+        self._view.show_help(
+            content=about_help, view_dimensions=about_help_view_dimensions
+        )
 
     def handle_exit_application_command(self, event=None):
         self._view.exit_application()
