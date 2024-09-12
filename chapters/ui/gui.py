@@ -239,7 +239,7 @@ class AppMenuBar(tk.Menu):
         self, load_chapters_from_youtube_command: callable
     ):
         self._chapters_file_menu.add_command(
-            label="Load Chapters From Youtube ...",
+            label="Load Chapters From YouTube ...",
             command=load_chapters_from_youtube_command,
             underline=19,
         )
