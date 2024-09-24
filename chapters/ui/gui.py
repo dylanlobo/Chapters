@@ -519,6 +519,7 @@ class AppMainWindow(ttk.tk.Tk):
             initialdir=self._chapters_file_path,
             title="Select Chapters file",
             initialfile=default_filename,
+            filetypes=(("chapters files", "*.ch"),),
         )
         if selected_chapters_file:
             dir = (Path(selected_chapters_file.name)).parent.absolute()
