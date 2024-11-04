@@ -131,6 +131,16 @@ class PlayerControlPanel(ttk.LabelFrame):
             ">": "<Right>",
             ">|": "<Control-Shift-Right>",
         }
+        self._alt_button_to_key_dict = {
+            "|<": "<Control-Shift-less>",
+            "<<<": "<Control-comma>",
+            "<<": "<Shift-less>",
+            "<": "<comma>",
+            ">>>": "<Control-period>",
+            ">>": "<Shift-greater>",
+            ">": "<period>",
+            ">|": "<Control-Shift-greater>",
+        }
 
     def bind_player_controls_commands(self, player_controls_funcs: Dict[str, callable]):
         for button in self._buttons:
@@ -139,6 +149,11 @@ class PlayerControlPanel(ttk.LabelFrame):
             if button_name in self._button_to_key_dict:
                 self._root.bind(
                     self._button_to_key_dict[button_name],
+                    ignore_arguments(player_controls_funcs[button_name]),
+                )
+            if button_name in self._alt_button_to_key_dict:
+                self._root.bind(
+                    self._alt_button_to_key_dict[button_name],
                     ignore_arguments(player_controls_funcs[button_name]),
                 )
 
