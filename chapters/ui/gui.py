@@ -87,6 +87,7 @@ class ChaptersPanel(ttk.LabelFrame):
     def set_selected_chapter_index(self, index: int):
         self._chapters_lb.select_set(index)
         self._chapters_lb.activate(index)
+        self._chapters_lb.see(index)
 
 
 def ignore_arguments(func):
