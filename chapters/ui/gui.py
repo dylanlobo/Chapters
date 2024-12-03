@@ -57,8 +57,8 @@ class ChaptersPanel(ttk.LabelFrame):
     def set_chapters(self, chapters: List[str]):
         self._chapters_lb.delete(0, tk.END)
         self._chapters_lb.insert(tk.END, *chapters)
-        self._chapters_lb.selection_clear(0, tk.END)
-        self._chapters_lb.selection_set(0)
+        # self._chapters_lb.selection_clear(0, tk.END)
+        # self._chapters_lb.selection_set(0)
 
     def bind_chapters_selection_commands(
         self, chapters_selection_action_functs: List[callable]
@@ -83,6 +83,10 @@ class ChaptersPanel(ttk.LabelFrame):
             # Return the first (and only) selected index
             return selected_indices[0]
         return None
+
+    def set_selected_chapter_index(self, index: int):
+        self._chapters_lb.select_set(index)
+        self._chapters_lb.activate(index)
 
 
 def ignore_arguments(func):
@@ -599,6 +603,9 @@ class AppMainWindow(ttk.tk.Tk):
 
     def get_selected_chapter_index(self) -> int:
         return self._chapters_panel.get_selected_chapter_index()
+
+    def set_selected_chapter_index(self, index: int):
+        self._chapters_panel.set_selected_chapter_index(index)
 
     def select_theme(self) -> str:
         if not self._supported_themes:

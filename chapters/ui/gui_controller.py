@@ -46,6 +46,10 @@ class GuiAppInterface(Protocol):
 
     def get_youtube_video(self, url_str) -> str: ...
 
+    def get_selected_chapter_index(self) -> int | None: ...
+
+    def set_selected_chapter_index(self, index: int): ...
+
     def get_chapter_details(
         self, chapter_name: str = "", chapter_timestamp: str = ""
     ) -> List[str]: ...
@@ -317,6 +321,13 @@ class GuiController:
             break
         return chapter_name, chapter_timestamp
 
+    def _get_chapter_index_by_name(self, chapters: dict, chapter_name: str) -> int:
+        chapter_index = 0
+        for i, v in enumerate(chapters.keys()):
+            if v == chapter_name:
+                chapter_index = i
+        return chapter_index
+
     def handle_insert_chapter_command(self, event=None):
         cur_position = 0
         try:
@@ -343,9 +354,13 @@ class GuiController:
             return
         self._chapters[chapter_name] = chapter_timestamp
         self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        new_chapter_index = self._get_chapter_index_by_name(
+            self._chapters, chapter_name
+        )
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+        self._view.set_selected_chapter_index(new_chapter_index)
 
     def handle_delete_chapter_command(self, event=None):
         selected_chapter_index = self._view.get_selected_chapter_index()
@@ -356,6 +371,11 @@ class GuiController:
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+        num_chapters = len(self._chapters)
+        if selected_chapter_index >= num_chapters:
+            self._view.set_selected_chapter_index(num_chapters - 1)
+        else:
+            self._view.set_selected_chapter_index(selected_chapter_index)
 
     def handle_edit_chapter_command(self, event=None):
         selected_chapter_index = self._view.get_selected_chapter_index()
