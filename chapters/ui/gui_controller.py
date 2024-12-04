@@ -398,9 +398,13 @@ class GuiController:
             chapters_list[selected_chapter_index] = (chapter_name, chapter_timestamp)
             self._chapters = dict(chapters_list)
         self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        edited_chapter_index = self._get_chapter_index_by_name(
+            self._chapters, chapter_name
+        )
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+        self._view.set_selected_chapter_index(edited_chapter_index)
 
     def handle_jump_to_position_command(self, event=None):
         position_timestamp = "00:00:00"
@@ -442,6 +446,7 @@ class GuiController:
         )
 
     def handle_edit_title_command(self, event=None):
+        selected_chapter_index = self._view.get_selected_chapter_index()
         title = self._view.request_chapter_title(title=self._chapters_title)
         if not title:
             return
@@ -449,6 +454,8 @@ class GuiController:
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+        if selected_chapter_index is not None:
+            self._view.set_selected_chapter_index(selected_chapter_index)
 
     def handle_show_keyboard_shortcuts_help_command(self, event=None):
         self._view.show_help(
