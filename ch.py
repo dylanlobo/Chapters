@@ -1,8 +1,6 @@
 """Creates a console or gui based menu of chapters, from a default file named ch.ch in
 the current directory. A chapters file may also be specified with the -f
-option. On startup, the application displays a list of running MPRIS enabled
-players to connect to. If only one player is running then it directly connects
-to the running player.
+option. 
 """
 
 import argparse
