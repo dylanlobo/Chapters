@@ -51,6 +51,7 @@ class ChaptersPanel(ttk.LabelFrame):
 
         # Key Bindings
         self._chapters_lb.bind("<Return>", self.lb_selection_handler)
+        self._chapters_lb.bind("<KP_Enter>", self.lb_selection_handler)
         self._chapters_lb.bind("<Button-3>", self.lb_right_button_handler)
         self._chapters_lb.bind("<Button-3>", self.lb_selection_handler, add="+")
 

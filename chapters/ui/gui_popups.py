@@ -84,6 +84,7 @@ class EntryFieldsPopup:
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(padx=5, pady=5)
         self._popup.bind("<Return>", self._handle_ok_command)
+        self._popup.bind("<KP_Enter>", self._handle_ok_command)
         self._popup.bind("<Escape>", self._handle_cancel_command)
 
     def _handle_cancel_command(self, event=None):
@@ -178,6 +179,7 @@ class ListSelectionPopup:
         button_panel.grid_rowconfigure(0, weight=1)
         button_panel.grid(padx=5, pady=5)
         self._popup.bind("<Return>", self._handle_select_command)
+        self._popup.bind("<KP_Enter>", self._handle_select_command)
         self._popup.bind("<Escape>", self._handle_cancel_command)
 
     def _handle_cancel_command(self, event=None):
@@ -216,6 +218,7 @@ class HelpPopup:
         self._popup.title(self._help_title)
         self._create_message_panel()
         self._popup.bind("<Return>", self._handle_enter_pressed)
+        self._popup.bind("<KP_Enter>", self._handle_enter_pressed)
         self._popup.bind("<Escape>", self._handle_escape_pressed)
         self._popup.resizable(width=False, height=False)
         # set to be on top of the main window
@@ -284,6 +287,7 @@ class MessagePopup:
         self._popup.title(self._message_title)
         self._create_message_panel()
         self._popup.bind("<Return>", self._handle_enter_pressed)
+        self._popup.bind("<KP_Enter>", self._handle_enter_pressed)
         self._popup.bind("<Escape>", self._handle_escape_pressed)
         self._popup.resizable(width=False, height=False)
         self._popup.grid()
