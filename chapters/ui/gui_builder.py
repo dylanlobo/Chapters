@@ -169,6 +169,8 @@ class AppGuiBuilder:
             )
             dir = (Path(self._chapters_filename)).parent.absolute()
             self._view.set_chapters_file_path(str(dir))
+        else:
+            self._gui_controller.handle_load_chapters_from_youtube_no_prompt_command()
         self.create_chapters_panel_bindings(chapters_title, chapters)
         self.create_player_control_panel_bindings()
         self.create_app_window_bindings()

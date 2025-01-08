@@ -12,6 +12,7 @@ from chapters.chapters_help import (
     about_help_view_dimensions,
 )
 from chapters.logger_config import logger
+import threading
 
 
 def ignore_inst_method_args(func):
@@ -289,7 +290,9 @@ class GuiController:
         self._load_chapters_from_youtube(gui_prompt=True)
 
     def handle_load_chapters_from_youtube_no_prompt_command(self, event=None):
-        self._load_chapters_from_youtube(gui_prompt=False)
+        threading.Thread(
+            target=lambda: self._load_chapters_from_youtube(gui_prompt=False)
+        ).start()
 
     def _update_chapter_details(
         self, suggested_chapter_name: str, suggestd_chapter_timestamp: str
