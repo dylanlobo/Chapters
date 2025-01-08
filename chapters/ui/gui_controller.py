@@ -269,6 +269,13 @@ class GuiController:
         if not video_name:
             return
         self.set_chapters_yt_video(video_name)
+        threading.Thread(
+            target=lambda: self._download_chapters_from_youtube_and_update_ui(
+                video_name
+            )
+        ).start()
+
+    def _download_chapters_from_youtube_and_update_ui(self, video_name: str):
         try:
             self._chapters_title, self._chapters = helpers.load_chapters_from_youtube(
                 video=self._chapters_yt_video
@@ -290,9 +297,7 @@ class GuiController:
         self._load_chapters_from_youtube(gui_prompt=True)
 
     def handle_load_chapters_from_youtube_no_prompt_command(self, event=None):
-        threading.Thread(
-            target=lambda: self._load_chapters_from_youtube(gui_prompt=False)
-        ).start()
+        self._load_chapters_from_youtube(gui_prompt=False)
 
     def _update_chapter_details(
         self, suggested_chapter_name: str, suggestd_chapter_timestamp: str
