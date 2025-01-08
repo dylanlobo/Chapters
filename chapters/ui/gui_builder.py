@@ -124,7 +124,7 @@ class AppGuiBuilder:
         logger().debug("Creating chapters listbox items")
 
         self._view.set_main_window_title(chapters_title)
-        self._view.set_chapters(chapters=listbox_items)
+        self._view.after(10, self._view.set_chapters, listbox_items)
         self._view.bind_chapters_selection_commands(
             chapters_selection_action_functs=chapters_position_functions
         )
