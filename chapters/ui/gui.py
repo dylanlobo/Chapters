@@ -495,6 +495,11 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_connect_to_player_command(connect_player_command)
         self.bind("<c>", connect_player_command)
 
+    def bind_connect_to_next_player_command(
+        self, connect_next_player_command: callable
+    ):
+        self.bind("<n>", connect_next_player_command)
+
     def bind_disconnect_player_command(self, disconnect_player_command: callable):
         self._menu_bar.bind_disconnect_player_command(disconnect_player_command)
         self.bind("<d>", disconnect_player_command)

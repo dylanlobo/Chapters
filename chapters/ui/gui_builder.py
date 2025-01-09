@@ -57,6 +57,9 @@ class AppGuiBuilder:
         self._view.bind_connect_to_player_command(
             self._gui_controller.handle_connection_command
         )
+        self._view.bind_connect_to_next_player_command(
+            self._gui_controller.handle_next_connection_command
+        )
         self._view.bind_disconnect_player_command(
             self._gui_controller.handle_disconnection_command
         )

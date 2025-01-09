@@ -219,6 +219,39 @@ class GuiController:
             except PlayerCreationError as e:
                 logger().error(e)
 
+    def handle_next_connection_command(self, event=None):
+        """
+        Connect to the next MPRIS enabled media player in the list of running
+        players. If the current player is the last one in the list, it will
+        wrap around to the first player in the list.
+
+        :param event: GUI event, ignored.
+        :type event: None or tk.Event
+        :raises: PlayerCreationError if the player cannot be created.
+        """
+        cur_player_name = self._cur_player.ext_name
+        running_player_names = PlayerFactory.get_running_player_names()
+        if not running_player_names:
+            return
+        running_player_names_list = list(running_player_names.keys())
+        next_player_name = None
+        for i, pn in enumerate(running_player_names_list):
+            if pn == cur_player_name:
+                next_player_name = running_player_names_list[
+                    (i + 1) % len(running_player_names_list)
+                ]
+                break
+        if next_player_name is None:
+            next_player_name = running_player_names_list[0]
+        try:
+
+            self._cur_player = PlayerFactory.get_player(
+                running_player_names[next_player_name], next_player_name
+            )
+            self._view.set_player_instance_name(next_player_name)
+        except PlayerCreationError as e:
+            logger().error(e)
+
     def handle_raise_player_window_command(self, event=None):
         self.raise_player_window()
 
