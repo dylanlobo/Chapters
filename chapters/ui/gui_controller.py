@@ -457,13 +457,16 @@ class GuiController:
         self._view.set_selected_chapter_index(edited_chapter_index)
 
     def handle_next_chapters_command(self, event=None):
-        self._chapters_title, self._chapters = self._chapters_cache.next_pair(
-            self._chapters_title
+        chapters = None
+        chapters_title = None
+        chapters_title, chapters = self._chapters_cache.next_pair(self._chapters_title)
+        if chapters_title is None:
+            return
+        self._chapters_title = chapters_title
+        self._chapters = chapters
+        self._gui_builder.create_chapters_panel_bindings(
+            self._chapters_title, self._chapters
         )
-        if self._chapters_title:
-            self._gui_builder.create_chapters_panel_bindings(
-                self._chapters_title, self._chapters
-            )
 
     def handle_jump_to_position_command(self, event=None):
         position_timestamp = "00:00:00"
