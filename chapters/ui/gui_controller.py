@@ -151,6 +151,9 @@ class GuiController:
         self._chapters_yt_video: str = None
         self._chapters_title: str = None
         self._chapters: Dict[str, str] = {}
+        self._chapters_cache: helpers.FIFOCache[str, Dict[str, str]] = (
+            helpers.FIFOCache(max_size=5)
+        )
 
     @property
     def cur_player(self):
@@ -263,6 +266,7 @@ class GuiController:
                 self._chapters_title, self._chapters = helpers.load_chapters_file(
                     chapters_file
                 )
+                self._chapters_cache[self._chapters_title] = self._chapters
             except (FileNotFoundError, ValueError) as e:
                 logger().error(e)
                 self._view.show_error_message(
@@ -313,6 +317,7 @@ class GuiController:
             self._chapters_title, self._chapters = helpers.load_chapters_from_youtube(
                 video=self._chapters_yt_video
             )
+            self._chapters_cache[self._chapters_title] = self._chapters
         except Exception as e:
             logger().error(e)
             self._view.show_error_message(
@@ -395,6 +400,7 @@ class GuiController:
             return
         self._chapters[chapter_name] = chapter_timestamp
         self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        self._chapters_cache[self._chapters_title] = self._chapters
         new_chapter_index = self._get_chapter_index_by_name(
             self._chapters, chapter_name
         )
@@ -409,6 +415,7 @@ class GuiController:
             return
         del self._chapters[list(self._chapters.keys())[selected_chapter_index]]
         self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        self._chapters_cache[self._chapters_title] = self._chapters
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
@@ -438,7 +445,9 @@ class GuiController:
         else:
             chapters_list[selected_chapter_index] = (chapter_name, chapter_timestamp)
             self._chapters = dict(chapters_list)
+            self._chapters_cache[self._chapters_title] = self._chapters
         self._chapters = helpers.sort_chapters_on_time(self._chapters)
+        self._chapters_cache[self._chapters_title] = self._chapters
         edited_chapter_index = self._get_chapter_index_by_name(
             self._chapters, chapter_name
         )
@@ -446,6 +455,15 @@ class GuiController:
             self._chapters_title, self._chapters
         )
         self._view.set_selected_chapter_index(edited_chapter_index)
+
+    def handle_next_chapters_command(self, event=None):
+        self._chapters_title, self._chapters = self._chapters_cache.next_pair(
+            self._chapters_title
+        )
+        if self._chapters_title:
+            self._gui_builder.create_chapters_panel_bindings(
+                self._chapters_title, self._chapters
+            )
 
     def handle_jump_to_position_command(self, event=None):
         position_timestamp = "00:00:00"
@@ -482,6 +500,7 @@ class GuiController:
             return
         self._initialise_chapters_content()
         self._chapters_title = title
+        self._chapters_cache[self._chapters_title] = self._chapters
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
@@ -492,6 +511,7 @@ class GuiController:
         if not title:
             return
         self._chapters_title = title
+        self._chapters_cache[self._chapters_title] = self._chapters
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )

@@ -54,6 +54,10 @@ class AppGuiBuilder:
             self._gui_controller.handle_clear_chapters_command
         )
 
+        self._view.bind_next_chapters_command(
+            self._gui_controller.handle_next_chapters_command
+        )
+
         self._view.bind_connect_to_player_command(
             self._gui_controller.handle_connection_command
         )

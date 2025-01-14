@@ -7,6 +7,7 @@ import os
 import json
 from chapters.mpris_player import Player
 from enum import IntEnum
+from collections import OrderedDict
 from functools import lru_cache
 from typing import Dict, Tuple, TextIO
 import chapters.yt_ch as youtube_chapters
@@ -24,11 +25,49 @@ class Direction(IntEnum):
 class SuspiciousOperation(Exception):
     """The user did something suspicious"""
 
+    pass
+
 
 class SuspiciousFileOperation(SuspiciousOperation):
     """A Suspicious filesystem operation was attempted"""
 
     pass
+
+
+class FIFOCache(OrderedDict):
+    def __init__(self, max_size, *args, **kwargs):
+        self.max_size = max_size
+        super().__init__(*args, **kwargs)
+
+    def __setitem__(self, key, value):
+        # Remove the key if it already exists to refresh its order
+        if key in self:
+            self.pop(key)
+        # If the cache exceeds max size, remove the oldest item
+        elif len(self) >= self.max_size:
+            self.popitem(last=False)
+        # Add the new key-value pair
+        super().__setitem__(key, value)
+
+    def next_pair(self, key):
+        """
+        Returns the next key-value pair in the cache, in insertion order.
+
+        Given a key, this method returns the next key-value pair in the cache,
+        wrapping around to the start of the cache if the given key is the last
+        item in the cache. If the given key is not found in the cache, returns None.
+
+        :param key: The key to find the next pair for
+        :return: A tuple containing the next key and its associated value, or None
+        """
+        keys = list(self.keys())  # Get all keys in insertion order
+        try:
+            idx = keys.index(key)  # Find the index of the given key
+            next_idx = (idx + 1) % len(keys)  # Wrap around using modulo
+            next_key = keys[next_idx]
+            return next_key, self[next_key]
+        except ValueError:
+            return None, None  # Key not found in cache
 
 
 def get_url_from_clipboard():

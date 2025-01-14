@@ -491,6 +491,9 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_clear_all_command(clear_chapters)
         self.bind("<Control-l>", clear_chapters)
 
+    def bind_next_chapters_command(self, next_chapters_command: callable):
+        self.bind("<Control-n>", next_chapters_command)
+
     def bind_connect_to_player_command(self, connect_player_command: callable):
         self._menu_bar.bind_connect_to_player_command(connect_player_command)
         self.bind("<c>", connect_player_command)
