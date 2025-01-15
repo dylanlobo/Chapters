@@ -699,6 +699,7 @@ class RecentChaptersPopup:
             popup_title=self._title,
             listbox_title="Recent Chapters",
             listbox_items=recent_chapters,
+            listbox_width=50,
         )
 
     def select_recent_chapters_title(self) -> str | None:

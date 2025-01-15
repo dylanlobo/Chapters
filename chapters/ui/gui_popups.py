@@ -113,22 +113,25 @@ class ListSelectionPopup:
         popup_title: str,
         listbox_title: str,
         listbox_items: List[str],
+        listbox_height: int = 5,
+        listbox_width: int = 20,
     ):
         self._master: tk.Tk = master
         self._popup_title: str = popup_title
         self._listbox_title: str = listbox_title
         self._listbox_items: List[str] = listbox_items
         self._selected_item: str = None
+        self._listbox_height: int = listbox_height
+        self._listbox_width: int = listbox_width
         self._construct_popup()
 
     def _create_listbox_panel(self):
         listbox_panel = ttk.LabelFrame(master=self._popup, text=self._listbox_title)
-        lb_height = 5
         self._listbox = tk.Listbox(
             master=listbox_panel,
             listvariable=tk.StringVar(value=self._listbox_items),
-            width=20,
-            height=lb_height,
+            width=self._listbox_width,
+            height=self._listbox_height,
         )
         self._listbox.grid(column=0, row=0, sticky="NWES")
         self._listbox.select_set(0)
