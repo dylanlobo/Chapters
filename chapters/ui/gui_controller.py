@@ -277,7 +277,7 @@ class GuiController:
             except (FileNotFoundError, ValueError) as e:
                 logger().error(e)
                 self._view.show_error_message(
-                    f"An error occurred when attempting to load {chapters_file.name}.\n"
+                    f"An error occurred when attempting to load {chapters_file}.\n"
                     "Kindly ensure the file exists and is in the correct format.\n"
                     "Check the log output for more details."
                 )
