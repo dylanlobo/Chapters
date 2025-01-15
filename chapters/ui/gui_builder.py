@@ -54,6 +54,10 @@ class AppGuiBuilder:
             self._gui_controller.handle_clear_chapters_command
         )
 
+        self._view.bind_recent_chapters_command(
+            self._gui_controller.handle_select_recent_chapters_command
+        )
+
         self._view.bind_next_chapters_command(
             self._gui_controller.handle_next_chapters_command
         )

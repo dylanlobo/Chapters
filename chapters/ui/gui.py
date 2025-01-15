@@ -235,6 +235,13 @@ class AppMenuBar(tk.Menu):
             underline=0,
         )
 
+    def bind_recent_chapters_command(self, recent_chapters_command: callable):
+        self._chapters_menu.add_command(
+            label="Recent Chapters",
+            command=recent_chapters_command,
+            underline=0,
+        )
+
     def bind_save_chapters_file_command(self, save_chapters_file_command: callable):
         self._chapters_file_menu.add_command(
             label="Save Chapters File ...",
@@ -491,6 +498,9 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_clear_all_command(clear_chapters)
         self.bind("<Control-l>", clear_chapters)
 
+    def bind_recent_chapters_command(self, recent_chapters_command: callable):
+        self._menu_bar.bind_recent_chapters_command(recent_chapters_command)
+
     def bind_next_chapters_command(self, next_chapters_command: callable):
         self.bind("<Control-n>", next_chapters_command)
 
@@ -586,6 +596,19 @@ class AppMainWindow(ttk.tk.Tk):
         )
         return self.popup.select_new_player_name()
 
+    def select_recent_chapters(self, recent_chapters: List[str]) -> str:
+        if not recent_chapters:
+            msg_popup = MessagePopup(
+                master=self,
+                title="Select Recent Chapters",
+                message_content_description="Message",
+                message_content="No recent chapters found!",
+            )
+            msg_popup.show_message()
+            return
+        popup = RecentChaptersPopup(master=self, recent_chapters=recent_chapters)
+        return popup.select_recent_chapters_title()
+
     def get_youtube_video(self, url_str) -> str:
         self._yt_video_popup = YoutubeChaptersPopup(master=self, video_url=url_str)
         video = self._yt_video_popup.get_video()
@@ -665,6 +688,20 @@ class PlayerConnectionPopup:
         )
 
     def select_new_player_name(self) -> str | None:
+        return self._popup.get_response()
+
+
+class RecentChaptersPopup:
+    def __init__(self, master: tk.Tk, recent_chapters: List[str] = []):
+        self._title = "Select Recent Chapters"
+        self._popup = ListSelectionPopup(
+            master=master,
+            popup_title=self._title,
+            listbox_title="Recent Chapters",
+            listbox_items=recent_chapters,
+        )
+
+    def select_recent_chapters_title(self) -> str | None:
         return self._popup.get_response()
 
 

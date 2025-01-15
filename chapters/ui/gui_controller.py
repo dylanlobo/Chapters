@@ -75,6 +75,8 @@ class GuiAppInterface(Protocol):
 
     def bind_connect_to_player_command(self, connect_player_command: callable): ...
 
+    def select_recent_chapters(self, recent_chapters: List[str]) -> str: ...
+
     def select_new_player(self) -> Player: ...
 
     def bind_load_chapters_command(self, load_chapters_file_command: callable): ...
@@ -221,6 +223,11 @@ class GuiController:
                 self._view.set_player_instance_name(new_player_name)
             except PlayerCreationError as e:
                 logger().error(e)
+
+    def handle_select_recent_chapters_command(self, event=None):
+        recent_chapters = list(self._chapters_cache.keys())
+        selected_chapter_title = self._view.select_recent_chapters(recent_chapters)
+        self._load_chapters_from_cache(selected_chapter_title)
 
     def handle_next_connection_command(self, event=None):
         """
@@ -462,11 +469,15 @@ class GuiController:
         chapters_title, chapters = self._chapters_cache.next_pair(self._chapters_title)
         if chapters_title is None:
             return
-        self._chapters_title = chapters_title
-        self._chapters = chapters
-        self._gui_builder.create_chapters_panel_bindings(
-            self._chapters_title, self._chapters
-        )
+        self._load_chapters_from_cache(chapters_title)
+
+    def _load_chapters_from_cache(self, chapters_title: str):
+        if chapters_title in self._chapters_cache:
+            self._chapters_title = chapters_title
+            self._chapters = self._chapters_cache[chapters_title]
+            self._gui_builder.create_chapters_panel_bindings(
+                self._chapters_title, self._chapters
+            )
 
     def handle_jump_to_position_command(self, event=None):
         position_timestamp = "00:00:00"
