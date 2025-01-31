@@ -74,6 +74,11 @@ keyboard_shortcuts_help: str = """
                 <td>-----&gt;</td>
                 <td>Delete</td>
             </tr>
+            <tr>
+                <td>Load next recent Chapters</td>
+                <td>-----&gt;</td>
+                <td>Shift + N</td>
+            </tr>
 
             <!-- Player Control Section -->
             <tr>
@@ -83,6 +88,11 @@ keyboard_shortcuts_help: str = """
                 <td>Connect to player</td>
                 <td>-----&gt;</td>
                 <td>c</td>
+            </tr>
+            <tr>
+                <td>Connect to next player</td>
+                <td>-----&gt;</td>
+                <td>n</td>
             </tr>
             <tr>
                 <td>Disconnect from player</td>

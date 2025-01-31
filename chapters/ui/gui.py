@@ -502,7 +502,7 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_recent_chapters_command(recent_chapters_command)
 
     def bind_next_chapters_command(self, next_chapters_command: callable):
-        self.bind("<Control-n>", next_chapters_command)
+        self.bind("<Shift-N>", next_chapters_command)
 
     def bind_connect_to_player_command(self, connect_player_command: callable):
         self._menu_bar.bind_connect_to_player_command(connect_player_command)
