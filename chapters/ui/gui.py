@@ -54,6 +54,8 @@ class ChaptersPanel(ttk.LabelFrame):
         self._chapters_lb.bind("<KP_Enter>", self.lb_selection_handler)
         self._chapters_lb.bind("<Button-3>", self.lb_right_button_handler)
         self._chapters_lb.bind("<Button-3>", self.lb_selection_handler, add="+")
+        self._chapters_lb.bind("<Double-Button-1>", self.lb_right_button_handler)
+        self._chapters_lb.bind("<Double-Button-1>", self.lb_selection_handler, add="+")
 
     def set_chapters(self, chapters: List[str]):
         self._chapters_lb.delete(0, tk.END)
