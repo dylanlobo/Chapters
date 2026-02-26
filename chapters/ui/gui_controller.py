@@ -123,30 +123,40 @@ class GuiController:
     ):
         self._view: GuiAppInterface = view
         self._gui_builder: AppGuiBuilderInterface = app_gui_builder
-        player = self._get_sole_running_player()
+        player = self._get_running_player()
         if player:
             self.cur_player = player
         else:
             self.cur_player = PlayerProxy(None)
         self._initialise_chapters_content()
 
-    def _get_sole_running_player(self) -> Player:
-        running_players = PlayerFactory.get_running_player_names()
-        player: Player = None
-        if len(running_players) == 1:
-            player_names = list(running_players.keys())
+    def _get_running_player(self) -> Player:
+        running_player_names = PlayerFactory.get_running_player_names()
+        selected_player: Player = None
+        selected_player_name: str = ""
+        player_names = list(running_player_names.keys())
+        if player_names:
             selected_player_name = player_names[0]
-            selected_player_fq_name = running_players[selected_player_name]
+        latest_tab_number = 0
+        for player_name in player_names:
+            if player_name.startswith("chrome."):
+                tab_name = player_name.split(".")[1]
+                tab_number = int(tab_name.replace("tab", ""))
+                if tab_number > latest_tab_number:
+                    latest_tab_number = tab_number
+                    selected_player_name = player_name
+        if selected_player_name:
+            selected_player_fq_name = running_player_names[selected_player_name]
             logger().debug("Creating player")
             try:
-                player = PlayerFactory.get_player(
+                selected_player = PlayerFactory.get_player(
                     selected_player_fq_name, selected_player_name
                 )
             except PlayerCreationError as e:
                 logger().error(e)
             else:
                 logger().debug("Created player")
-        return player
+        return selected_player
 
     def _initialise_chapters_content(self):
         self._chapters_filename: str = None
