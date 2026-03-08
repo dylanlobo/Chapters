@@ -75,6 +75,16 @@ keyboard_shortcuts_help: str = """
                 <td>Delete</td>
             </tr>
             <tr>
+                <td>Clear all chapters</td>
+                <td>-----&gt;</td>
+                <td>Control + l</td>
+            </tr>
+            <tr>
+                <td>Copy currently displayed chapters to system clipboard</td>
+                <td>-----&gt;</td>
+                <td>Control + t</td>
+            </tr>
+            <tr>
                 <td>Load next recent Chapters</td>
                 <td>-----&gt;</td>
                 <td>Shift + N</td>

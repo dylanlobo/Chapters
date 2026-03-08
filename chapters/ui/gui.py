@@ -60,8 +60,12 @@ class ChaptersPanel(ttk.LabelFrame):
     def set_chapters(self, chapters: List[str]):
         self._chapters_lb.delete(0, tk.END)
         self._chapters_lb.insert(tk.END, *chapters)
+        self._chapters = chapters
         # self._chapters_lb.selection_clear(0, tk.END)
         # self._chapters_lb.selection_set(0)
+
+    def get_chapters(self) -> List[str]:
+        return self._chapters
 
     def bind_chapters_selection_commands(
         self, chapters_selection_action_functs: List[callable]
@@ -237,6 +241,15 @@ class AppMenuBar(tk.Menu):
             underline=0,
         )
 
+    def bind_copy_chapters_as_txt_command(
+        self, copy_chapters_as_text_command: callable
+    ):
+        self._chapters_menu.add_command(
+            label="Copy Chapters as Text",
+            command=copy_chapters_as_text_command,
+            underline=0,
+        )
+
     def bind_recent_chapters_command(self, recent_chapters_command: callable):
         self._chapters_menu.add_command(
             label="Recent Chapters",
@@ -340,7 +353,7 @@ class AppMenuBar(tk.Menu):
 
 class AppMainWindow(ttk.tk.Tk):
     """The main window for the application. In addation, this class implements a view
-    protocol (AppInterface) as part of an MVP implementation"""
+    protocol (GuiAppInterface) as part of an MVP implementation"""
 
     def __init__(self):
         super().__init__(className="Chapters")
@@ -436,6 +449,9 @@ class AppMainWindow(ttk.tk.Tk):
     def set_chapters(self, chapters: List[str]):
         self._chapters_panel.set_chapters(chapters=chapters)
 
+    def get_chapters(self):
+        return self._chapters_panel.get_chapters()
+
     def set_chapters_file_path(self, chapters_file_path: str):
         self._chapters_file_path = chapters_file_path
 
@@ -499,6 +515,10 @@ class AppMainWindow(ttk.tk.Tk):
     def bind_clear_all_command(self, clear_chapters: callable):
         self._menu_bar.bind_clear_all_command(clear_chapters)
         self.bind("<Control-l>", clear_chapters)
+
+    def bind_copy_chapters_as_txt_command(self, copy_chapters_as_txt_command: callable):
+        self._menu_bar.bind_copy_chapters_as_txt_command(copy_chapters_as_txt_command)
+        self.bind("<Control-t>", copy_chapters_as_txt_command)
 
     def bind_recent_chapters_command(self, recent_chapters_command: callable):
         self._menu_bar.bind_recent_chapters_command(recent_chapters_command)

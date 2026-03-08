@@ -9,7 +9,7 @@ from chapters.mpris_player import Player
 from enum import IntEnum
 from collections import OrderedDict
 from functools import lru_cache
-from typing import Dict, Tuple, TextIO
+from typing import Dict, List, Tuple, TextIO
 import chapters.yt_ch as youtube_chapters
 
 import pyclip
@@ -235,3 +235,8 @@ def load_chapters_from_youtube(video: str):
     _, chapters_json = youtube_chapters.get_chapters_json(video)
     (title, chapters) = chapters_json_to_py(chapters_json)
     return title, chapters
+
+
+def copy_chapters_txt_to_clipboard(chapters_txt_list: List[str]):
+    if chapters_txt_list:
+        pyclip.copy("\n".join(chapters_txt_list))

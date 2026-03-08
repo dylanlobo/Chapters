@@ -54,6 +54,10 @@ class AppGuiBuilder:
             self._gui_controller.handle_clear_chapters_command
         )
 
+        self._view.bind_copy_chapters_as_txt_command(
+            self._gui_controller.handle_copy_chapters_txt_to_clipboard_command
+        )
+
         self._view.bind_recent_chapters_command(
             self._gui_controller.handle_select_recent_chapters_command
         )

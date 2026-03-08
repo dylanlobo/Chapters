@@ -61,6 +61,8 @@ class GuiAppInterface(Protocol):
 
     def set_chapters(self, chapters: List[str]): ...
 
+    def get_chapters(self) -> List[str]: ...
+
     def set_chapters_file_path(self, chapters_file_path: str): ...
 
     def set_player_instance_name(self, instance_name): ...
@@ -86,6 +88,10 @@ class GuiAppInterface(Protocol):
     def bind_reload_chapters(self, reload_chapters: callable): ...
 
     def bind_clear_chapters(self, clear_chapters: callable): ...
+
+    def bind_copy_chapters_as_txt_command(
+        self, copy_chapters_as_text_command: callable
+    ): ...
 
     def bind_raise_player_window(self, raise_player_window: callable): ...
 
@@ -517,6 +523,10 @@ class GuiController:
     def handle_clear_chapters_command(self, event=None):
         self._initialise_chapters_content()
         self._gui_builder.create_chapters_panel_bindings()
+
+    def handle_copy_chapters_txt_to_clipboard_command(self, event=None):
+        chapters_txt_list = self._view.get_chapters()
+        helpers.copy_chapters_txt_to_clipboard(chapters_txt_list)
 
     def handle_new_title_command(self, event=None):
         title = self._view.request_chapter_title()
