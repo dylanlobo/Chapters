@@ -660,7 +660,7 @@ class AppMainWindow(ttk.tk.Tk):
         return self._chapters_panel.get_selected_chapter_index()
 
     def set_selected_chapter_index(self, index: int):
-        self._chapters_panel.set_selected_chapter_index(index)
+        self.after(10, self._chapters_panel.set_selected_chapter_index, index)
 
     def select_theme(self) -> str:
         if not self._supported_themes:
