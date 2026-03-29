@@ -1,8 +1,13 @@
 from typing import List, Dict, Protocol, TextIO, Tuple
 from chapters import helpers
-from chapters.mpris_player import Player
-from chapters.mpris_player import PlayerFactory, PlayerCreationError
-from chapters.mpris_player import PlayerProxy
+from chapters.mpris_player import (
+    Player,
+    PlayerFactory,
+    PlayerCreationError,
+    PlayerProxy,
+)
+
+import chapters.mpris_player.player_helpers as player_helpers
 from chapters.chapters_help import (
     keyboard_shortcuts_help,
     overview_help,
@@ -129,40 +134,12 @@ class GuiController:
     ):
         self._view: GuiAppInterface = view
         self._gui_builder: AppGuiBuilderInterface = app_gui_builder
-        player = self._get_running_player()
+        player = player_helpers.select_running_player()
         if player:
             self.cur_player = player
         else:
             self.cur_player = PlayerProxy(None)
         self._initialise_chapters_content()
-
-    def _get_running_player(self) -> Player:
-        running_player_names = PlayerFactory.get_running_player_names()
-        selected_player: Player = None
-        selected_player_name: str = ""
-        player_names = list(running_player_names.keys())
-        if player_names:
-            selected_player_name = player_names[0]
-        latest_tab_number = 0
-        for player_name in player_names:
-            if player_name.startswith("chrome."):
-                tab_name = player_name.split(".")[1]
-                tab_number = int(tab_name.replace("tab", ""))
-                if tab_number > latest_tab_number:
-                    latest_tab_number = tab_number
-                    selected_player_name = player_name
-        if selected_player_name:
-            selected_player_fq_name = running_player_names[selected_player_name]
-            logger().debug("Creating player")
-            try:
-                selected_player = PlayerFactory.get_player(
-                    selected_player_fq_name, selected_player_name
-                )
-            except PlayerCreationError as e:
-                logger().error(e)
-            else:
-                logger().debug("Created player")
-        return selected_player
 
     def _initialise_chapters_content(self):
         self._chapters_filename: str = None
