@@ -118,6 +118,7 @@ def handle_player_error(func: callable):
         except Exception as e:
             logger().error("An error occured when attempting to call the player")
             logger().error(type(e))
+            logger().error(e)
             self._view.show_error_message(
                 "An error occurred in the currently connected player.\n"
                 "Kindly try reconnecting or disconnecting to avoid this error message"
@@ -185,6 +186,11 @@ class GuiController:
     @handle_player_error
     def play_pause_player(self):
         self._cur_player.play_pause()
+
+    @handle_player_error
+    @ignore_inst_method_args
+    def mute_player(self):
+        self._cur_player.mute()
 
     @handle_player_error
     def next_player(self):

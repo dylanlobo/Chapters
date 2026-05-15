@@ -22,6 +22,7 @@ class Player_pydbus(Player):
 
     def __init__(self, mpris_player_name, ext_player_name) -> None:
         super().__init__(mpris_player_name, ext_player_name)
+        self._prev_volume = 0.5
 
     def connect(self):
         bus = pydbus.SessionBus()
@@ -63,6 +64,13 @@ class Player_pydbus(Player):
 
     def seek(self, offset: int) -> None:
         self.mpris_player.Seek(offset)
+
+    def mute(self) -> None:
+        if self.mpris_player.Volume <= 0:
+            self.mpris_player.Volume = self._prev_volume
+        else:
+            self._prev_volume = self.mpris_player.Volume
+            self.mpris_player.Volume = 0
 
     def set_position(self, to_position: int) -> None:
         if self._is_object_path_valid(self.trackid):

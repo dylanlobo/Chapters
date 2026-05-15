@@ -81,6 +81,11 @@ class PlayerProxy(Player):
             self._player.stop()
 
     @reconnect_player
+    def mute(self) -> None:
+        if self._player:
+            self._player.mute()
+
+    @reconnect_player
     def seek(self, offset: int) -> None:
         if self._player:
             self._player.seek(offset)

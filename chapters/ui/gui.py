@@ -551,6 +551,9 @@ class AppMainWindow(ttk.tk.Tk):
         self._menu_bar.bind_raise_player_window_command(raise_player_window_command)
         self.bind("<f>", raise_player_window_command)
 
+    def bind_mute_player_command(self, mute_player_command: callable):
+        self.bind("<m>", mute_player_command)
+
     def bind_show_keyboard_shortcuts_help_command(
         self, show_keyboard_shortcuts_help_command: callable
     ):

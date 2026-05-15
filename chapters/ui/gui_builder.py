@@ -83,6 +83,8 @@ class AppGuiBuilder:
             self._gui_controller.handle_raise_player_window_command
         )
 
+        self._view.bind_mute_player_command(self._gui_controller.mute_player)
+
         self._view.bind_show_overview_help_command(
             self._gui_controller.handle_show_overview_help_command
         )
