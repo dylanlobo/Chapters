@@ -556,9 +556,13 @@ class AppMainWindow(ttk.tk.Tk):
 
     def bind_player_volume_up_command(self, player_volume_up_command: callable):
         self.bind("<Button-4>", player_volume_up_command)
+        self.bind("+", player_volume_up_command)
+        self.bind("<KP_Add>", player_volume_up_command)
 
     def bind_player_volume_down_command(self, player_volume_down_command: callable):
         self.bind("<Button-5>", player_volume_down_command)
+        self.bind("-", player_volume_down_command)
+        self.bind("<KP_Subtract>", player_volume_down_command)
 
     def bind_show_keyboard_shortcuts_help_command(
         self, show_keyboard_shortcuts_help_command: callable

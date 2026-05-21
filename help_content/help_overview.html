@@ -1,12 +1,12 @@
 <html lang="en">
 
 <head>
-    <h4>Overview</h4>
+  <h4>Overview</h4>
 </head>
 
 <body>
-    <table>
-      <p style="font-size: 10px;">
+  <table>
+    <p style="font-size: 10px;">
       <tr>
         <td><b><i>File Operations</i></b></td>
       </tr>
@@ -22,13 +22,19 @@
       <tr>
         <td><b><i>Player Control Operations</i></b></td>
       </tr>
-      <tr> 
+      <tr>
         <td>- Connect/Disconnect from a running (MPRIS enabled) audio/video media player.</td>
       </tr>
-      <tr> 
+      <tr>
         <td> - Play/Pause </td>
       </tr>
-      <tr> 
+      <tr>
+        <td> - Mute/Unmute </td>
+      </tr>
+      <tr>
+        <td> - Volume Control </td>
+      </tr>
+      <tr>
         <td>- Skip forwards or backwards by 5 seconds, 10 seconds or 1 minute</td>
       </tr>
       <tr>
@@ -53,6 +59,10 @@
         <td> - Delete a selected chapter.</td>
       </tr>
       <tr>
+        <td> - Copy all chapters to the clipboard as a plain text list.</td>
+      </tr>
+
+      <tr>
         <td><b><i>Theme Selection:</i></b></td>
       </tr>
       <tr>
@@ -71,24 +81,26 @@
         <td><b><i>Note:</i></b></td>
       </tr>
       <tr>
-        <td> Chaptering information can be stored and loaded from JSON files with a .ch extension. The general structure of a Chapters file is:
+        <td> Chaptering information can be stored and loaded from JSON files with a .ch extension. The general structure
+          of a Chapters file is:
         </td>
       </tr>
       <tr>
         <td>
-  {
-    "title":"my title",
-    "chapters":{
-    "Introduction":"00:00:00",
-    "Chapter 1":"00:01:00"
-    }
-  }
+          {
+          "title":"my title",
+          "chapters":{
+          "Introduction":"00:00:00",
+          "Chapter 1":"00:01:00"
+          }
+          }
         </td>
       </tr>
       <tr>
-        <td> 
-          "title" is the title of the audio/video file. "chapters" is a map collection of chapter titles and their corresponding time offsets
-  in HH:MM:SS format.
+        <td>
+          "title" is the title of the audio/video file. "chapters" is a map collection of chapter titles and their
+          corresponding time offsets
+          in HH:MM:SS format.
         </td>
       </tr>
     </p>

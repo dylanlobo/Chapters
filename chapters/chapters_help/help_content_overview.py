@@ -30,6 +30,12 @@ overview_help: str = """
       <tr>
         <td> - Play/Pause </td>
       </tr>
+            <tr>
+        <td> - Mute/Unmute </td>
+      </tr>
+      <tr>
+        <td> - Volume Control </td>
+      </tr>
       <tr>
         <td>- Skip forwards or backwards by 5 seconds, 10 seconds or 1 minute</td>
       </tr>
@@ -53,6 +59,9 @@ overview_help: str = """
       </tr>
       <tr>
         <td> - Delete a selected chapter.</td>
+      </tr>
+      <tr>
+        <td> - Copy all chapters to the clipboard as a plain text list.</td>
       </tr>
       <tr>
         <td><b><i>Theme Selection:</i></b></td>

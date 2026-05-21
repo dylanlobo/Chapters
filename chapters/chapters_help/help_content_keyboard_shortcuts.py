@@ -331,6 +331,27 @@ keyboard_shortcuts_help: str = """
             </tr>
 
 
+            <tr>
+
+                <td>Volume up</td>
+
+                <td>-----&gt </td>
+
+                <td>mouse wheel roll up or +</td>
+
+            </tr>
+
+            <tr>
+
+                <td>Volume down</td>
+
+                <td>-----&gt</td>
+
+                <td> mouse wheel roll down or -</td>
+
+            </tr>
+
+
 
             <!-- Application Control Section -->
 
