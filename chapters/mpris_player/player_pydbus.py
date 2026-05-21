@@ -72,6 +72,24 @@ class Player_pydbus(Player):
             self._prev_volume = self.mpris_player.Volume
             self.mpris_player.Volume = 0
 
+    def volume_up(self) -> None:
+        cur_volume = self.mpris_player.Volume
+        if cur_volume < 1:
+            if cur_volume + 0.05 > 1:
+                self.mpris_player.Volume = 1
+            else:
+                self.mpris_player.Volume = cur_volume + 0.05
+        elif cur_volume <= 0:
+            self.mpris_player.Volume = 0.05
+
+    def volume_down(self) -> None:
+        cur_volume = self.mpris_player.Volume
+        if cur_volume > 0:
+            if cur_volume - 0.05 < 0:
+                self.mpris_player.Volume = 0
+            else:
+                self.mpris_player.Volume -= 0.05
+
     def set_position(self, to_position: int) -> None:
         if self._is_object_path_valid(self.trackid):
             self.mpris_player.SetPosition(self.trackid, to_position)

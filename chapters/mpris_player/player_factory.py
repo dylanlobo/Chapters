@@ -3,7 +3,6 @@ from .player import Player, PlayerConnectionError, PlayerCreationError
 from .proxy_player import PlayerProxy
 from chapters.logger_config import logger
 
-
 try:
     from .player_pydbus import Player_pydbus
 except ImportError:

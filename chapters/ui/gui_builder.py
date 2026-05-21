@@ -85,6 +85,12 @@ class AppGuiBuilder:
 
         self._view.bind_mute_player_command(self._gui_controller.mute_player)
 
+        self._view.bind_player_volume_up_command(self._gui_controller.player_volume_up)
+
+        self._view.bind_player_volume_down_command(
+            self._gui_controller.player_volume_down
+        )
+
         self._view.bind_show_overview_help_command(
             self._gui_controller.handle_show_overview_help_command
         )

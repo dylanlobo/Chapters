@@ -33,6 +33,10 @@ def handle_player_error(func: callable):
 
 
 class PlayerProxy(Player):
+    """PlayerProxy is a wrapper around a Player object.
+    It provides a way to interact with the Player object
+    while handling potential disconnections and errors."""
+
     def __init__(self, player: Player):
         self._player = player
 
@@ -84,6 +88,16 @@ class PlayerProxy(Player):
     def mute(self) -> None:
         if self._player:
             self._player.mute()
+
+    @reconnect_player
+    def volume_up(self) -> None:
+        if self._player:
+            self._player.volume_up()
+
+    @reconnect_player
+    def volume_down(self) -> None:
+        if self._player:
+            self._player.volume_down()
 
     @reconnect_player
     def seek(self, offset: int) -> None:

@@ -193,6 +193,14 @@ class GuiController:
         self._cur_player.mute()
 
     @handle_player_error
+    def player_volume_up(self, event=None):
+        self._cur_player.volume_up()
+
+    @handle_player_error
+    def player_volume_down(self, event=None):
+        self._cur_player.volume_down()
+
+    @handle_player_error
     def next_player(self):
         self._cur_player.next()
 
