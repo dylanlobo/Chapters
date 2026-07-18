@@ -94,6 +94,8 @@ class GuiAppInterface(Protocol):
 
     def bind_clear_chapters(self, clear_chapters: callable): ...
 
+    def bind_back_player_command(self, player_back_command: callable): ...
+
     def bind_copy_chapters_as_txt_command(
         self, copy_chapters_as_text_command: callable
     ): ...
@@ -182,6 +184,11 @@ class GuiController:
     ):
         offset_with_dir = helpers.to_microsecs(offset) * direction
         self._cur_player.seek(offset_with_dir)
+
+    @handle_player_error
+    @ignore_inst_method_args
+    def back_player(self):
+        self._cur_player.back()
 
     @handle_player_error
     def play_pause_player(self):

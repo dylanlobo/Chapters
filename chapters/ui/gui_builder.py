@@ -14,8 +14,8 @@ class AppGuiBuilder:
         self._gui_controller = GuiController(self._view, self)
         self._gui_controller.set_chapters_filename(chapters_filename)
 
-    def create_menu_bar_bindings(self) -> None:
-        logger().debug("Creating menu bar")
+    def create_main_view_bindings(self) -> None:
+        logger().debug("Creating main view bindings")
         self._view.bind_load_chapters_file_command(
             self._gui_controller.handle_load_chapters_file_command
         )
@@ -103,6 +103,10 @@ class AppGuiBuilder:
             self._gui_controller.handle_show_about_help_command
         )
 
+        self._view.bind_back_player_command(
+            self._gui_controller.back_player
+        )
+
     def create_chapters_panel_bindings(
         self, chapters_title: str = "", chapters: Dict[str, str] = {}
     ) -> None:
@@ -179,11 +183,9 @@ class AppGuiBuilder:
         }
         self._view.bind_player_controls_commands(button_action_funcs)
 
-    def create_app_window_bindings(self) -> None:
-        logger().debug("Creating Application Window bindings")
 
     def build(self) -> AppMainWindow:
-        self.create_menu_bar_bindings()
+        self.create_main_view_bindings()
         chapters_title: str = ""
         chapters: Dict[str, str] = {}
         if self._chapters_filename:
@@ -196,7 +198,6 @@ class AppGuiBuilder:
             self._gui_controller.handle_load_chapters_from_youtube_no_prompt_command()
         self.create_chapters_panel_bindings(chapters_title, chapters)
         self.create_player_control_panel_bindings()
-        self.create_app_window_bindings()
         return self._view
 
 

@@ -39,6 +39,7 @@ class PlayerProxy(Player):
 
     def __init__(self, player: Player):
         self._player = player
+        self._prev_position = None
 
     def set_player(self, player: Player):
         self._player = player
@@ -102,11 +103,20 @@ class PlayerProxy(Player):
     @reconnect_player
     def seek(self, offset: int) -> None:
         if self._player:
+            self._prev_position = self._player.position
             self._player.seek(offset)
+
+    @reconnect_player
+    def back(self) -> None:
+        if self._player:
+            if self._prev_position is not None:
+                self._player.set_position(self._prev_position)
+                self._player.back()
 
     @reconnect_player
     def set_position(self, to_position: int) -> None:
         if self._player:
+            self._prev_position = self._player.position
             self._player.set_position(to_position)
 
     @reconnect_player

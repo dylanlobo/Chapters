@@ -39,11 +39,16 @@ class Player(ABC):
     @abstractmethod
     def previous(self) -> None: ...
 
+
+
     @abstractmethod
     def stop(self) -> None: ...
 
     @abstractmethod
     def seek(self, offset: int) -> None: ...
+
+    @abstractmethod
+    def back(self) -> None: ...
 
     @abstractmethod
     def mute(self) -> None: ...

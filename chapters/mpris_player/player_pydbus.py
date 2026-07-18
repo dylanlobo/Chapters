@@ -104,6 +104,10 @@ class Player_pydbus(Player):
             cur_pos = self.position
             seek_to_position = to_position - cur_pos
             self.seek(seek_to_position)
+    
+    def back(self) -> None:
+        """ Implemented in the the proxy player class"""        
+        pass
 
     @property
     def mpris_player(self):

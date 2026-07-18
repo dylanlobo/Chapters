@@ -564,6 +564,10 @@ class AppMainWindow(ttk.tk.Tk):
         self.bind("-", player_volume_down_command)
         self.bind("<KP_Subtract>", player_volume_down_command)
 
+    def bind_back_player_command(self, player_back_command: callable):
+       self.bind("<BackSpace>", player_back_command)
+
+
     def bind_show_keyboard_shortcuts_help_command(
         self, show_keyboard_shortcuts_help_command: callable
     ):
