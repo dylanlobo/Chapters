@@ -351,7 +351,7 @@ class AppMenuBar(tk.Menu):
         )
 
 
-class AppMainWindow(ttk.tk.Tk):
+class AppMainWindow(ttk.Tk):
     """The main window for the application. In addation, this class implements a view
     protocol (GuiAppInterface) as part of an MVP implementation"""
 
