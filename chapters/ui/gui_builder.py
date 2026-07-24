@@ -44,6 +44,9 @@ class AppGuiBuilder:
         self._view.bind_insert_chapter_command(
             self._gui_controller.handle_insert_chapter_command
         )
+        self._view.bind_insert_chapters_from_clipboard_json(
+            self._gui_controller.handle_load_chapters_from_JSON_string
+        )
         self._view.bind_edit_chapter_command(
             self._gui_controller.handle_edit_chapter_command
         )

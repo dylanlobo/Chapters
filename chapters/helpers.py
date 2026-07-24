@@ -85,6 +85,16 @@ def get_url_from_clipboard():
         _url = None
     return _url
 
+def get_chapters_from_clipboard_json()->Tuple[str, Dict[str, str]]:
+    
+    try:
+        clipboard_contents:bytes = pyclip.paste()
+        _json:str = clipboard_contents.decode("utf-8")
+    except Exception as e:
+        logger().warning(e)
+    chapters:Tuple[str, Dict[str, str]] = chapters_json_to_py(_json)
+    return chapters
+
 
 def get_valid_filename(name):
     """

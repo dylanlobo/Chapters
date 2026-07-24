@@ -504,6 +504,9 @@ class AppMainWindow(ttk.Tk):
         self._menu_bar.bind_insert_chapter_command(insert_chapter_command)
         self.bind("<Control-i>", insert_chapter_command)
 
+    def bind_insert_chapters_from_clipboard_json(self, insert_chapters_from_clipboard_json: callable):
+        self.bind("<Control-Shift-I>", insert_chapters_from_clipboard_json)
+
     def bind_edit_chapter_command(self, edit_chapter_command: callable):
         self._menu_bar.bind_edit_chapter_command(edit_chapter_command)
         self.bind("<F2>", edit_chapter_command)

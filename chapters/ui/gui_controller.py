@@ -317,6 +317,13 @@ class GuiController:
             self._chapters_title, self._chapters
         )
 
+    def handle_load_chapters_from_JSON_string(self, event=None):
+        chapters: Tuple[str, Dict[str, str]] = ()
+        chapters = helpers.get_chapters_from_clipboard_json()
+        if not chapters:
+            return
+        self._gui_builder.create_chapters_panel_bindings(*chapters)
+
     def _load_chapters_from_youtube(self, gui_prompt: bool):
         video_name = helpers.get_url_from_clipboard()
         if gui_prompt:
