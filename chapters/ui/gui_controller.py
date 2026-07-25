@@ -323,6 +323,8 @@ class GuiController:
         if not chapters:
             return
         self._gui_builder.create_chapters_panel_bindings(*chapters)
+        self._chapters_title, self._chapters = chapters
+        self._chapters_cache[self._chapters_title] = self._chapters
 
     def _load_chapters_from_youtube(self, gui_prompt: bool):
         video_name = helpers.get_url_from_clipboard()
