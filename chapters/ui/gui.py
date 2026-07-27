@@ -270,7 +270,12 @@ class AppMenuBar(tk.Menu):
             command=load_chapters_file_command,
             underline=0,
         )
-
+    def bind_load_chapters_dir_in_cache_command(self, load_chapters_dir_in_cache_command: callable):
+        self._chapters_file_menu.add_command(
+            label="Load Chapters Into Cache ...",
+            command=load_chapters_dir_in_cache_command,
+            underline=0,
+        )
     def bind_reload_chapters_file_command(self, reload_chapters_file_command: callable):
         self._chapters_file_menu.add_command(
             label="Reload Current File",
@@ -475,6 +480,13 @@ class AppMainWindow(ttk.Tk):
         self._menu_bar.bind_reload_chapters_file_command(reload_chapters_file_command)
         self.bind("<F5>", reload_chapters_file_command)
 
+    def bind_load_chapters_dir_in_cache_command(
+        self, load_chapters_dir_in_cache_command: callable
+    ):
+        self._menu_bar.bind_load_chapters_dir_in_cache_command(
+            load_chapters_dir_in_cache_command
+        )
+
     def bind_load_chapters_from_youtube_command(
         self, load_chapters_from_youtube_command: callable
     ):
@@ -623,7 +635,15 @@ class AppMainWindow(ttk.Tk):
             self._chapters_file_path = str(dir)
         return selected_chapters_file
 
-    def select_new_player(self, running_player_names: List[str]) -> str:
+    def request_chapters_dir(self) -> str:
+        if not self._chapters_file_path:
+            self._chapters_file_path = f"{Path.home()}/Videos"
+        if not Path(self._chapters_file_path).exists():
+            self._chapters_file_path = f"{Path.home()}"
+        self._chapters_file_path = filedialog.askdirectory(initialdir=self._chapters_file_path)
+        return self._chapters_file_path
+
+    def select_new_player(self, running_player_names: List[str]) -> str|None:
         if not running_player_names:
             msg_popup = MessagePopup(
                 master=self,
@@ -638,7 +658,7 @@ class AppMainWindow(ttk.Tk):
         )
         return self.popup.select_new_player_name()
 
-    def select_recent_chapters(self, recent_chapters: List[str]) -> str:
+    def select_recent_chapters(self, recent_chapters: List[str]) -> str|None:
         if not recent_chapters:
             msg_popup = MessagePopup(
                 master=self,

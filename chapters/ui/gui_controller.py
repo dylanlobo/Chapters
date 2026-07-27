@@ -48,6 +48,8 @@ class GuiAppInterface(Protocol):
 
     def request_chapters_file(self) -> TextIO: ...
 
+    def request_chapters_dir(self) -> str: ...
+
     def request_save_chapters_file(self, default_filename: str = "ch.ch") -> TextIO: ...
 
     def get_youtube_video(self, url_str) -> str: ...
@@ -150,7 +152,7 @@ class GuiController:
         self._chapters_title: str = None
         self._chapters: Dict[str, str] = {}
         self._chapters_cache: helpers.FIFOCache[str, Dict[str, str]] = (
-            helpers.FIFOCache(max_size=5)
+            helpers.FIFOCache(max_size=15)
         )
 
     @property
@@ -316,6 +318,22 @@ class GuiController:
         self._gui_builder.create_chapters_panel_bindings(
             self._chapters_title, self._chapters
         )
+
+    def handle_load_chapters_cache_from_dir(self, event=None):
+        chapters_dir = self._view.request_chapters_dir()
+        if not chapters_dir:
+            return
+        chapters_files_list = helpers.list_chapters_files_in_dir(chapters_dir)
+        if not chapters_files_list:
+            return
+        chapters_files_list.sort(key=lambda x: x.name.lower())
+        for chapters_file in chapters_files_list:
+            try:
+                chapters_title, chapters = helpers.load_chapters_file(str(chapters_file))
+            except (FileNotFoundError, ValueError) as e:
+                logger().error(e)
+                continue
+            self._chapters_cache[chapters_title] = chapters
 
     def handle_load_chapters_from_JSON_string(self, event=None):
         chapters: Tuple[str, Dict[str, str]] = ()

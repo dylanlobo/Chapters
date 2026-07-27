@@ -4,6 +4,7 @@ Helper functions for mpris-dbus-apps
 
 import re
 import os
+import pathlib
 import json
 from chapters.mpris_player import Player
 from enum import IntEnum
@@ -203,6 +204,10 @@ def chapters_py_to_json(title: str, chapters: Dict[str, str]) -> str:
     chapters_dict["title"] = title
     chapters_dict["chapters"] = chapters
     return json.dumps(chapters_dict, indent=4)
+
+def list_chapters_files_in_dir(dir_path:str)->List[pathlib.Path]:
+    chapters_files = list(pathlib.Path(dir_path).glob('*.ch'))
+    return chapters_files
 
 
 def load_chapters_file(chapters_file: str | TextIO) -> Tuple[str, Dict[str, str]]:

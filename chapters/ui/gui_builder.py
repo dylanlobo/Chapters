@@ -27,6 +27,9 @@ class AppGuiBuilder:
             self._gui_controller.handle_load_chapters_from_youtube_no_prompt_command
         )
 
+        self._view.bind_load_chapters_dir_in_cache_command(
+            self._gui_controller.handle_load_chapters_cache_from_dir)
+
         self._view.bind_reload_chapters_file_command(
             self._gui_controller.handle_reload_chapters_command
         )
