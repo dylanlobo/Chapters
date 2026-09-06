@@ -250,6 +250,15 @@ class AppMenuBar(tk.Menu):
             underline=0,
         )
 
+    def bind_copy_chapters_as_json_command(
+        self, copy_chapters_as_json_command: callable
+    ):
+        self._chapters_menu.add_command(
+            label="Copy Chapters as JSON",
+            command=copy_chapters_as_json_command,
+            underline=0,
+        )
+
     def bind_recent_chapters_command(self, recent_chapters_command: callable):
         self._chapters_menu.add_command(
             label="Recent Chapters",
@@ -535,6 +544,8 @@ class AppMainWindow(ttk.Tk):
         self._menu_bar.bind_copy_chapters_as_txt_command(copy_chapters_as_txt_command)
         self.bind("<Control-t>", copy_chapters_as_txt_command)
 
+    def bind_copy_chapters_as_json_command(self, copy_chapters_as_json_command: callable):
+        self._menu_bar.bind_copy_chapters_as_json_command(copy_chapters_as_json_command)
     def bind_recent_chapters_command(self, recent_chapters_command: callable):
         self._menu_bar.bind_recent_chapters_command(recent_chapters_command)
 

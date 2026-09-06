@@ -553,6 +553,12 @@ class GuiController:
         chapters_txt_list = self._view.get_chapters()
         helpers.copy_chapters_txt_to_clipboard(chapters_txt_list)
 
+    def handle_copy_chapters_json_to_clipboard_command(self, event=None):        
+        chapters_json:str = ""
+        chapters_json = helpers.chapters_py_to_json(self._chapters_title, self._chapters)
+        if chapters_json:
+            helpers.copy_chapters_json_to_clipboard(chapters_json)
+
     def handle_new_title_command(self, event=None):
         title = self._view.request_chapter_title()
         if not title:

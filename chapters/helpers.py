@@ -255,3 +255,7 @@ def load_chapters_from_youtube(video: str):
 def copy_chapters_txt_to_clipboard(chapters_txt_list: List[str]):
     if chapters_txt_list:
         pyclip.copy("\n".join(chapters_txt_list))
+
+def copy_chapters_json_to_clipboard(chapters_json: str):
+    if chapters_json:
+        pyclip.copy(chapters_json)
