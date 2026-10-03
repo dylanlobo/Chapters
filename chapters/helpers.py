@@ -72,6 +72,11 @@ class FIFOCache(OrderedDict):
 
 
 def get_url_from_clipboard():
+    """
+    Returns a youtube url from the system clipboard if presesent.
+    If a valid youtube url is found on the clipboard, it is returned
+    and the clipboard is 'cleared' by setting it to an space character.
+    """
     _url = None
     try:
         _url = pyclip.paste()
@@ -84,7 +89,10 @@ def get_url_from_clipboard():
             _url = None
     else:
         _url = None
+    if _url is not None:
+        pyclip.copy(" ")
     return _url
+
 
 def get_chapters_from_clipboard_json()->Tuple[str, Dict[str, str]]:
     
